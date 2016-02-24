@@ -11,6 +11,6 @@
      "matches" : 
        ["https://www.youtube.com/*",
        "http://www.youtube.com/*"],
-     "js" : ["inject.js"]
+     "js" : ["jquery.js", "inject.js"]
   }]
 }
