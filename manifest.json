@@ -5,11 +5,12 @@
   "description": "Search YouTube without stopping the video!",
   "version": "1.0",
   "author": "Dara Javaherian",
-  "background": {
-    "scripts": ["background.js"]
-   },
-  "permissions": [
-    "activeTab",
-    "https://ajax.googleapis.com/"
-  ]
+    
+  "permissions": ["tabs", "http://*/*", "https://*/*"],
+  "content_scripts" : [{
+     "matches" : 
+       ["https://www.youtube.com/*",
+       "http://www.youtube.com/*"],
+     "js" : ["inject.js"]
+  }]
 }
