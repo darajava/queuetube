@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+
+  "name": "YouTube Smooth",
+  "description": "Search YouTube without stopping the video!",
+  "version": "1.0",
+  "author": "Dara Javaherian",
+  "background": {
+    "scripts": ["background.js"]
+   },
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
