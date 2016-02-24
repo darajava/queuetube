@@ -1,6 +1,8 @@
 $(document).ready(function(){
-  $("#search-btn").attr("onclick", "")
-    .off("click").click(runThisLittleBeastInstead);
+  $("#search-btn")
+    .unwrap() // Remove the form submitting the query
+    .attr("onclick", "")
+    .click(runThisLittleBeastInstead);
 });
 
 
