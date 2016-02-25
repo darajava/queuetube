@@ -51,15 +51,28 @@ function changeSearchBar() {
 }
 
 function runThisLittleBeastInstead() {
+  getSearchResults();
+}
+
+function getSearchResults() {
   var query = "/results?search_query=" + encodeURIComponent($mySearch.find("input").val());
+  var results;
 
   $.ajax({
     url: query,
     type: "post",
     dataType: "html",
-    success: function (data) {
-      console.log(data);
-    },
+    success: function(data){replaceSidebar(data)},
+  });
+}
+
+function replaceSidebar(data) {
+ console.log(data); 
+  $nodes = $(data).find(".yt-lockup-title");
+  $nodes.each(function() {
+    console.log($(this));
+    $("#watch7-sidebar-contents").prepend($(this).html());
+    console.log($(this).html())
   });
 }
 
