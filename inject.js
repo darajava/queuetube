@@ -28,12 +28,17 @@ function saveSearchBars() {
 }
 
 function changeSearchBar() {
-  // If this is a video
+  // Todo: is this needed?
   setTimeout(function(){
+    // If this is a video
     if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
+      $mySearch.find("input").val($originalSearch.find("input").val());
+console.log($mySearch.find("input").val());
       $mySearch.show();
       $originalSearch.hide();
     } else {
+      $originalSearch.val($mySearch.val());
+
       $mySearch.hide();
       $originalSearch.show();
     }
