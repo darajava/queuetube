@@ -27,11 +27,13 @@ function saveSearchBars() {
 
 function changeSearchBar() {
   // If this is a video
-  if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
-    $("#yt-masthead-content").empty().append($mySearch);
-  } else {
-    $("#yt-masthead-content").empty().append($originalSearch);
-  }
+  setTimeout(function(){
+    if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
+      $("#yt-masthead-content").empty().append($mySearch);
+    } else {
+      $("#yt-masthead-content").empty().append($originalSearch);
+    }
+  }, 30);
 }
 
 function runThisLittleBeastInstead() {
