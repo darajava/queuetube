@@ -2,22 +2,29 @@ var $originalSearch;
 var $mySearch;
 
 $(document).ready(function(){
-  $originalSearch = $("#masthead-search").css("border", "1px solid green").clone(true, true);
-  $mySearch = $("#masthead-search").clone(true, true);
-
-  $mySearch = $mySearch.find("#search-btn")
-      // remove the form submitting the search query
-      .unwrap()
-      // and add a new element with the same id and classes to keep style
-      .wrap("<span id='masthead-search' class='search-form consolidated-form'></span>")
-      .attr("onclick", "")
-      .css("border", "1px solid red")
-      .click(runThisLittleBeastInstead).parent().append($("#masthead-search-terms"));
+  saveSearchBars();
   logElements();
 
   changeSearchBar();
 });
 
+
+function saveSearchBars() {
+  $originalSearch = $("#masthead-search").clone(true, true).css("border", "1px solid green");
+
+  var $searchButton = $('#search-btn').detach();
+  var $searchTerms = $('#masthead-search-terms').detach();
+
+  $searchButton.attr("onclick", "").css("border", "1px solid red").click(runThisLittleBeastInstead);
+
+  $mySearch = $("<div id='masthead-search' class='search-form consolidated-form'></div>")
+    .append($searchButton)
+    .append($searchTerms);
+}
+
+function myListener(tabId, info, tab) {
+  alert("ok");
+}
 
 function changeSearchBar() {
   // If this is a video
@@ -30,6 +37,7 @@ function changeSearchBar() {
 }
 
 function runThisLittleBeastInstead() {
+  console.log("for real?");
   alert();
 }
 
