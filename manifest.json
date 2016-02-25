@@ -7,6 +7,11 @@
   "author": "Dara Javaherian",
     
   "permissions": ["tabs", "http://*/*", "https://*/*"],
+  
+  "background": {
+    "persistent":true,
+    "page":"bg.html"
+  },
   "content_scripts" : [{
      "matches" : 
        ["https://www.youtube.com/*",
