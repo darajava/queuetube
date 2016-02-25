@@ -4,7 +4,6 @@ var $mySearch;
 
 $(document).ready(function(){
   saveSearchBars();
-  logElements();
   changeSearchBar();
 });
 
@@ -52,14 +51,20 @@ function changeSearchBar() {
 }
 
 function runThisLittleBeastInstead() {
-  console.log("for real?");
+  var query = "/results?search_query=" + encodeURIComponent($mySearch.find("input").val());
+
+  $.ajax({
+    url: query,
+    type: "post",
+    dataType: "html",
+    success: function (data) {
+      console.log(data);
+    },
+  });
 }
 
+// On page "reload" - youtube is kinda a single page app so
+// listen in bg.js for page reloads
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   changeSearchBar();
 });
-
-function logElements(){
-  console.dir($originalSearch);
-  console.dir($mySearch);
-}
