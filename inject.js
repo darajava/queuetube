@@ -11,7 +11,12 @@ $(document).ready(function(){
 
 function saveSearchBars() {
   $originalSearch = $("#masthead-search");
-  $mySearch = $(`
+  $mySearch = setupSearchBar();
+  $("#yt-masthead-content").append($mySearch);
+}
+
+function setupSearchBar() {
+  $searchBar = $(`
 
 <div id="my-masthead-search" class="search-form consolidated-form">
   <button id="my-search-btn" class="yt-uix-button yt-uix-button-size-default yt-uix-button-default search-btn-component search-button" tabindex="2" id="search-btn">
@@ -24,7 +29,12 @@ function saveSearchBars() {
 
 `);
 
-  $("#yt-masthead-content").append($mySearch);
+  $searchBar.css("border", "1px solid red");
+  $searchBar.hide();
+
+  $searchBar.click(runThisLittleBeastInstead);
+
+  return $searchBar;
 }
 
 function changeSearchBar() {
@@ -33,7 +43,6 @@ function changeSearchBar() {
     // If this is a video
     if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
       $mySearch.find("input").val($originalSearch.find("input").val());
-console.log($mySearch.find("input").val());
       $mySearch.show();
       $originalSearch.hide();
     } else {
@@ -42,12 +51,11 @@ console.log($mySearch.find("input").val());
       $mySearch.hide();
       $originalSearch.show();
     }
-  }, 30);
+  }, 300);
 }
 
 function runThisLittleBeastInstead() {
   console.log("for real?");
-  alert();
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
