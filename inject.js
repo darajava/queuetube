@@ -67,13 +67,33 @@ function getSearchResults() {
 }
 
 function replaceSidebar(data) {
- console.log(data); 
-  $nodes = $(data).find(".yt-lockup-title");
+  console.log(data); 
+  $nodes = $(data).find(".yt-lockup.yt-lockup-tile.yt-lockup-video");
+  
+  var newNodes = [];
+  
+  $("#watch7-sidebar-contents").empty();
   $nodes.each(function() {
-    console.log($(this));
-    $("#watch7-sidebar-contents").prepend($(this).html());
-    console.log($(this).html())
+    console.log($(this)[0]);
+    newNodes.push(createNewSideRes($(this)));
   });
+
+  console.log(newNodes);
+}
+
+function createNewSideRes($normalSearchResult) {
+  console.log($normalSearchResult.html())
+  var time = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
+  var ago = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(1)").text();
+  var title = $normalSearchResult.find(".yt-lockup-title a").text();
+  var channel = $normalSearchResult.find(".yt-lockup-byline a").text();
+  var channelHref = $normalSearchResult.find(".yt-lockup-byline a").attr("href");
+  var views = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(2)").text();
+  //var image = 
+  var url = $normalSearchResult.find(".yt-lockup-title a").attr("href");
+
+
+  return ([time, ago, title, channel, channelHref, views, url]);
 }
 
 // On page "reload" - youtube is kinda a single page app so
