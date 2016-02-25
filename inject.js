@@ -1,37 +1,41 @@
 var $originalSearch;
 var $mySearch;
 
-var $searchButton;
-var $searchTerms;
 
 $(document).ready(function(){
   saveSearchBars();
   logElements();
-
   changeSearchBar();
 });
 
 
 function saveSearchBars() {
-  $originalSearch = $("#masthead-search").clone(true, true).css("border", "1px solid green");
+  $originalSearch = $("#masthead-search");
+  $mySearch = $(`
 
-  $searchButton = $('#search-btn').detach();
-  $searchTerms = $('#masthead-search-terms').detach();
+<div id="my-masthead-search" class="search-form consolidated-form">
+  <button id="my-search-btn" class="yt-uix-button yt-uix-button-size-default yt-uix-button-default search-btn-component search-button" tabindex="2" id="search-btn">
+    <span class="yt-uix-button-content">Search</span>
+  </button>
+  <div id="my-masthead-search-terms" class="masthead-search-terms-border " dir="ltr">
+    <input id="my-masthead-search-term" autocomplete="off" class="search-term masthead-search-renderer-input yt-uix-form-input-bidi" type="text" tabindex="1" title="Search" dir="ltr" spellcheck="true" style="outline: none;">
+  </div>
+</div>
 
-  $searchButton.attr("onclick", "").css("border", "1px solid red").live("click", runThisLittleBeastInstead);
+`);
 
-  $mySearch = $("<div id='masthead-search' class='search-form consolidated-form'></div>")
-    .append($searchButton)
-    .append($searchTerms)
+  $("#yt-masthead-content").append($mySearch);
 }
 
 function changeSearchBar() {
   // If this is a video
   setTimeout(function(){
     if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
-      $("#yt-masthead-content").empty().append($mySearch);
+      $mySearch.show();
+      $originalSearch.hide();
     } else {
-      $("#yt-masthead-content").empty().append($originalSearch);
+      $mySearch.hide();
+      $originalSearch.show();
     }
   }, 30);
 }
