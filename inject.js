@@ -38,8 +38,6 @@ function setupSearchBar() {
 }
 
 function changeSearchBar() {
-  // Todo: is this needed?
-  setTimeout(function(){
     // If this is a video
     if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
       $mySearch.find("input").val($originalSearch.find("input").val());
@@ -51,7 +49,6 @@ function changeSearchBar() {
       $mySearch.hide();
       $originalSearch.show();
     }
-  }, 300);
 }
 
 function runThisLittleBeastInstead() {
