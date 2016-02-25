@@ -18,11 +18,11 @@ function saveSearchBars() {
   $searchButton = $('#search-btn').detach();
   $searchTerms = $('#masthead-search-terms').detach();
 
-  $searchButton.attr("onclick", "").css("border", "1px solid red").click(runThisLittleBeastInstead);
+  $searchButton.attr("onclick", "").css("border", "1px solid red").live("click", runThisLittleBeastInstead);
 
   $mySearch = $("<div id='masthead-search' class='search-form consolidated-form'></div>")
     .append($searchButton)
-    .append($searchTerms);
+    .append($searchTerms)
 }
 
 function changeSearchBar() {
