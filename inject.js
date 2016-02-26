@@ -29,7 +29,13 @@ function setupSearchBar() {
   $searchBar.css("border", "1px solid red");
   $searchBar.hide();
 
-  $searchBar.click(runThisLittleBeastInstead);
+  $searchBar.find("#my-search-btn").click(runThisLittleBeastInstead);
+  $searchBar.find("input").keydown(function(event) {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if (keycode == 13) {
+      runThisLittleBeastInstead();
+    }
+  })
 
   return $searchBar;
 }
@@ -50,6 +56,7 @@ function changeSearchBar() {
 }
 
 function runThisLittleBeastInstead() {
+  if($mySearch.find("input").val() == "") return;
   getSearchResults();
 }
 
@@ -61,21 +68,23 @@ function getSearchResults() {
     url: query,
     type: "post",
     dataType: "html",
-    success: function(data){replaceSidebar(data)},
+    success: function(data){replaceSidebar(data, $mySearch.find("input").val())},
   });
 }
 
-function replaceSidebar(data) {
+function replaceSidebar(data, query) {
   $nodes = $(data).find(".yt-lockup");
   //console.log($nodes);  
 
-  var newNodes = [];
-  
+  var newNodes = []; 
   $nodes.each(function() {
     newNodes.push(createNewSideRes($(this)));
   });
 
+  //$(".watch-sidebar-head").remove();
+
   $("#watch7-sidebar-contents .video-list").empty();
+  $("#watch7-sidebar-contents .video-list").append($("<div class='watch-sidebar-section'>Search results for: <i><b>" + query + "</b></i></div>"));
   newNodes.forEach(function(node) {
     $("#watch7-sidebar-contents .video-list").append(node);
   })
