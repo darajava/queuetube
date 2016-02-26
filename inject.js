@@ -29,7 +29,6 @@ function setupSearchBar() {
 </div>
 `);
 
-  $searchBar.css("border", "1px solid red");
   $searchBar.hide();
 
   $searchBar.find("#my-search-btn").click(runThisLittleBeastInstead);
