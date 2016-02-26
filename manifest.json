@@ -12,6 +12,9 @@
     "persistent":true,
     "page":"bg.html"
   },
+  "web_accessible_resources": [
+    "spinner.gif"
+  ],
   "content_scripts" : [{
      "matches" : 
        ["https://www.youtube.com/*",

@@ -3,6 +3,9 @@ var $mySearch;
 
 
 $(document).ready(function(){
+  // remove ads
+  $("#watch7-sidebar-ads").remove();
+
   saveSearchBars();
   changeSearchBar();
 });
@@ -57,7 +60,22 @@ function changeSearchBar() {
 
 function runThisLittleBeastInstead() {
   if($mySearch.find("input").val() == "") return;
+  addLoadingScreen();
   getSearchResults();
+}
+
+function addLoadingScreen() {
+  var overlay = jQuery('<div id="my-overlay"> </div>');
+  var imgURL = chrome.extension.getURL("spinner.gif");
+  var spinner = jQuery('<div id="my-overlay-spinner"> </div>');
+  spinner.css("background-image", "url(" + imgURL + ")");
+  $('#watch7-sidebar').append(overlay);
+  $('#watch7-sidebar').append(spinner);
+}
+
+function removeOverlay() {
+  $("#my-overlay").remove();
+  $("#my-overlay-spinner").remove();
 }
 
 function getSearchResults() {
@@ -82,13 +100,16 @@ function replaceSidebar(data, query) {
   });
 
   //$(".watch-sidebar-head").remove();
+  $upNext = $(".autoplay-bar").parent().detach();
 
   $("#watch7-sidebar-contents .video-list").empty();
+  $("#watch7-sidebar-contents .video-list").append($upNext);
   $("#watch7-sidebar-contents .video-list").append($("<div class='watch-sidebar-section'>Search results for: <i><b>" + query + "</b></i></div>"));
   newNodes.forEach(function(node) {
     $("#watch7-sidebar-contents .video-list").append(node);
   })
-
+  
+  removeOverlay();
   //console.log(newNodes);
 }
 
