@@ -99,14 +99,11 @@ function replaceSidebar(data, query) {
     newNodes.push(createNewSideRes($(this)));
   });
 
-  //$(".watch-sidebar-head").remove();
-  $upNext = $(".autoplay-bar").parent().detach();
-
-  $("#watch7-sidebar-contents .video-list").empty();
-  $("#watch7-sidebar-contents .video-list").append($upNext);
-  $("#watch7-sidebar-contents .video-list").append($("<div class='watch-sidebar-section'>Search results for: <i><b>" + query + "</b></i></div>"));
+  $("#generated-res").remove();
+  $("#watch7-sidebar-contents #watch-related.video-list").empty();
+  $("#watch7-sidebar-contents #watch-related.video-list").append($("<div id='generated-res' class='watch-sidebar-section'>Search results for: <i><b>" + query + "</b></i></div>"));
   newNodes.forEach(function(node) {
-    $("#watch7-sidebar-contents .video-list").append(node);
+    $("#watch7-sidebar-contents #watch-related.video-list").append(node);
   })
   
   removeOverlay();
