@@ -72,17 +72,20 @@ function replaceSidebar(data) {
 
   var newNodes = [];
   
-  $("#watch7-sidebar-contents").empty();
   $nodes.each(function() {
-console.log($(this)[0]);
     newNodes.push(createNewSideRes($(this)));
   });
+
+  $("#watch7-sidebar-contents").empty();
+  newNodes.forEach(function(node) {
+    $("#watch7-sidebar-contents").append(node);
+  })
 
   console.log(newNodes);
 }
 
 function createNewSideRes($normalSearchResult) {
-  var time = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
+  var duration = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
   var ago = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(1)").text();
   var title = $normalSearchResult.find(".yt-lockup-title a").text();
   var channel = $normalSearchResult.find(".yt-lockup-byline a").text();
@@ -90,8 +93,46 @@ function createNewSideRes($normalSearchResult) {
   var views = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(2)").text();
   var image = $normalSearchResult.find(".yt-thumb-simple img").attr("data-thumb");
   var url = $normalSearchResult.find(".yt-lockup-title a").attr("href");
+  var videoID = url.replace("/watch?v=", "");
 
-  return ([time, ago, title, channel, channelHref, views, image, url]);
+$newRes = $(`
+<li class="video-list-item related-list-item related-list-item-compact-video">
+  <div class="content-wrapper">
+  <a href="${url}" class="yt-uix-sessionlink content-link spf-link" title="${title}">
+    <span class="title">
+      ${title}
+    </span>
+    <span class="accessible-description" id="description-id-325936">
+       - Duration: ${duration}.
+    </span>
+    <span class="stat attribution">
+      <span class="g-hovercard" data-ytid="UCNsXOvE8mBbs0r5ijYkHVWQ" data-name="relmfu">
+        ${title}
+      </span>
+    </span>
+    <span class="stat view-count">${views}</span>
+  </a>
+  </div>
+  <div class="thumb-wrapper">
+    <a href="${url}" class="yt-uix-sessionlink thumb-link spf-link" tabindex="-1"><span class="yt-uix-simple-thumb-wrap yt-uix-simple-thumb-related" tabindex="0"><img aria-hidden="true" width="120" alt="" src="${image}" height="90"></span>
+    </a>
+    <span class="video-time">
+      ${duration}
+    </span>
+
+  
+
+  <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup addto-button video-actions spf-nolink hide-until-delayloaded addto-watch-later-button-sign-in yt-uix-tooltip" type="button" onclick=";return false;" role="button" title="Watch Later" data-video-ids="${videoID}" data-button-menu-id="shared-addto-watch-later-login"><span class="yt-uix-button-arrow yt-sprite"></span></button>
+  <span class="thumb-menu dark-overflow-action-menu video-actions">
+    <button aria-expanded="false" onclick=";return false;" class="yt-uix-button-reverse flip addto-watch-queue-menu spf-nolink hide-until-delayloaded yt-uix-button yt-uix-button-dark-overflow-action-menu yt-uix-button-size-default yt-uix-button-has-icon no-icon-markup yt-uix-button-empty" type="button" aria-haspopup="true"><span class="yt-uix-button-arrow yt-sprite"></span><ul class="watch-queue-thumb-menu yt-uix-button-menu yt-uix-button-menu-dark-overflow-action-menu hid"><li role="menuitem" class="overflow-menu-choice addto-watch-queue-menu-choice addto-watch-queue-play-next yt-uix-button-menu-item" data-action="play-next" onclick=";return false;" data-video-ids="${videoID}"><span class="addto-watch-queue-menu-text">Play next</span></li><li role="menuitem" class="overflow-menu-choice addto-watch-queue-menu-choice addto-watch-queue-play-now yt-uix-button-menu-item" data-action="play-now" onclick=";return false;" data-video-ids="${videoID}"><span class="addto-watch-queue-menu-text">Play now</span></li></ul></button>
+  </span>
+  <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup addto-button addto-queue-button video-actions spf-nolink hide-until-delayloaded addto-tv-queue-button yt-uix-tooltip" type="button" onclick=";return false;" title="Queue" data-video-ids="${videoID}" data-style="tv-queue"></button>
+</div>
+
+</li>
+`);
+
+  return $newRes;
 }
 
 // On page "reload" - youtube is kinda a single page app so
