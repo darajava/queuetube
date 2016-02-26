@@ -1,2 +1,2 @@
 # youtube-smooth
-Make YouTube a little bit smoother
+Make YouTube a little bit smoother by being able to search in the background finally...
