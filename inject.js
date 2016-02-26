@@ -76,12 +76,12 @@ function replaceSidebar(data) {
     newNodes.push(createNewSideRes($(this)));
   });
 
-  $("#watch7-sidebar-contents").empty();
+  $("#watch7-sidebar-contents .video-list").empty();
   newNodes.forEach(function(node) {
-    $("#watch7-sidebar-contents").append(node);
+    $("#watch7-sidebar-contents .video-list").append(node);
   })
 
-  console.log(newNodes);
+  //console.log(newNodes);
 }
 
 function createNewSideRes($normalSearchResult) {
@@ -91,10 +91,14 @@ function createNewSideRes($normalSearchResult) {
   var channel = $normalSearchResult.find(".yt-lockup-byline a").text();
   var channelHref = $normalSearchResult.find(".yt-lockup-byline a").attr("href");
   var views = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(2)").text();
-  var image = $normalSearchResult.find(".yt-thumb-simple img").attr("data-thumb");
+  var image = $normalSearchResult.find(".yt-thumb-simple img").data("thumb");
   var url = $normalSearchResult.find(".yt-lockup-title a").attr("href");
   var videoID = url.replace("/watch?v=", "");
 
+  if (typeof image === "undefined")
+    image = $normalSearchResult.find(".yt-thumb-simple img").attr("src");
+//console.log($normalSearchResult.find(".yt-thumb-simple img")[0]);
+console.log(image);
 $newRes = $(`
 <li class="video-list-item related-list-item related-list-item-compact-video">
   <div class="content-wrapper">
