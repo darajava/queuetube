@@ -136,7 +136,7 @@ $newRes = $(`
        - Duration: ${duration}.
     </span>
     <span class="stat attribution">
-      <span class="g-hovercard" data-ytid="UCNsXOvE8mBbs0r5ijYkHVWQ" data-name="relmfu">
+      <span class="g-hovercard">
         ${title}
       </span>
     </span>
@@ -150,9 +150,6 @@ $newRes = $(`
       ${duration}
     </span>
 
-  
-
-  <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup addto-button video-actions spf-nolink hide-until-delayloaded addto-watch-later-button-sign-in yt-uix-tooltip" type="button" onclick=";return false;" role="button" title="Watch Later" data-video-ids="${videoID}" data-button-menu-id="shared-addto-watch-later-login"><span class="yt-uix-button-arrow yt-sprite"></span></button>
   <span class="thumb-menu dark-overflow-action-menu video-actions">
     <button aria-expanded="false" onclick=";return false;" class="yt-uix-button-reverse flip addto-watch-queue-menu spf-nolink hide-until-delayloaded yt-uix-button yt-uix-button-dark-overflow-action-menu yt-uix-button-size-default yt-uix-button-has-icon no-icon-markup yt-uix-button-empty" type="button" aria-haspopup="true"><span class="yt-uix-button-arrow yt-sprite"></span><ul class="watch-queue-thumb-menu yt-uix-button-menu yt-uix-button-menu-dark-overflow-action-menu hid"><li role="menuitem" class="overflow-menu-choice addto-watch-queue-menu-choice addto-watch-queue-play-next yt-uix-button-menu-item" data-action="play-next" onclick=";return false;" data-video-ids="${videoID}"><span class="addto-watch-queue-menu-text">Play next</span></li><li role="menuitem" class="overflow-menu-choice addto-watch-queue-menu-choice addto-watch-queue-play-now yt-uix-button-menu-item" data-action="play-now" onclick=";return false;" data-video-ids="${videoID}"><span class="addto-watch-queue-menu-text">Play now</span></li></ul></button>
   </span>
