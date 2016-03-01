@@ -3,10 +3,9 @@ var $mySearch;
 
 
 $(document).ready(function(){
-  // remove ads
-  $("#watch7-sidebar-ads").remove();
-
   saveSearchBars();
+  options();
+  alert();console.log("HFJDFHJF");
   changeSearchBar();
 });
 
@@ -15,6 +14,17 @@ function saveSearchBars() {
   $originalSearch = $("#masthead-search");
   $mySearch = setupSearchBar();
   $("#yt-masthead-content").append($mySearch);
+}
+
+function options() {
+  if (typeof bgOn === "undefined") bgOn = true;
+ 
+  var $options = $(`
+<span id="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a>turn ${bgOn ? "off" : "on"}</a></span>
+`);
+  console.log($options.clone());
+  $originalSearch.append($options.clone());
+  $mySearch.append($options.clone());
 }
 
 function setupSearchBar() {

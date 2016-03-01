@@ -6,7 +6,7 @@
   "version": "1.0",
   "author": "Dara Javaherian",
     
-  "permissions": ["tabs", "http://*/*", "https://*/*"],
+  "permissions": ["tabs", "storage", "http://*/*", "https://*/*"],
   
   "background": {
     "persistent":true,
