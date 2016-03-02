@@ -15,19 +15,27 @@ function saveSearchBars() {
 }
 
 function options() {
-  var bgOn = getCookie("bgOn");
+  var bgOn = getCookie("bgOn") == "true";
   if (bgOn == null)
   {
-    setCookie("bgOn", true, 1000);
-    bgOn = getCookie("bgOn");
+    setCookie("bgOn", "true", 1000);
+    bgOn = getCookie("bgOn") == "true";
   }
-  alert(bgOn);
   var $options = $(`
-<span id="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a>turn ${bgOn ? "off" : "on"}</a></span>
+<span id="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a class="toggle">turn ${bgOn ? "off" : "on"}</a></span>
 `);
   console.log($options.clone());
   $originalSearch.append($options.clone());
   $mySearch.append($options.clone());
+
+  $(".toggle").click(function() {
+    console.log(getCookie("bgOn"));
+    if (getCookie("bgOn") == "true") {
+      setCookie("bgOn", "false", 1000);
+    } else {
+      setCookie("bgOn", "true", 1000);
+    }
+  });
 }
 
 function setupSearchBar() {
@@ -202,4 +210,8 @@ function getCookie(name) {
     if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
   }
   return null;
+}
+
+function eraseCookie(name) {
+    setCookie(name, "", -1);
 }
