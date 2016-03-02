@@ -1,11 +1,9 @@
 var $originalSearch;
 var $mySearch;
 
-
 $(document).ready(function(){
   saveSearchBars();
   options();
-  alert();console.log("HFJDFHJF");
   changeSearchBar();
 });
 
@@ -17,8 +15,13 @@ function saveSearchBars() {
 }
 
 function options() {
-  if (typeof bgOn === "undefined") bgOn = true;
- 
+  var bgOn = getCookie("bgOn");
+  if (bgOn == null)
+  {
+    setCookie("bgOn", true, 1000);
+    bgOn = getCookie("bgOn");
+  }
+  alert(bgOn);
   var $options = $(`
 <span id="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a>turn ${bgOn ? "off" : "on"}</a></span>
 `);
@@ -176,3 +179,27 @@ $newRes = $(`
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   changeSearchBar();
 });
+
+function setCookie(name, value, days) {
+  var expires;
+
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toGMTString();
+  } else {
+    expires = "";
+  }
+  document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function getCookie(name) {
+  var nameEQ = encodeURIComponent(name) + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+  }
+  return null;
+}
