@@ -17,7 +17,7 @@ function saveSearchBars() {
 
 function options() {
   bgOn = getCookie("bgOn") == "true";
-  if (bgOn == null)
+  if (getCookie("bgOn") == null)
   {
     setCookie("bgOn", "true", 1000);
     bgOn = getCookie("bgOn") == "true";
@@ -87,17 +87,14 @@ function changeSearchBar() {
 
 function runThisLittleBeastInstead() {
   if($mySearch.find("input").val() == "") return;
-  addLoadingScreen();
-  getSearchResults();
+  addOverlay();
+  return;
+  //getSearchResults();
 }
 
-function addLoadingScreen() {
-  var overlay = jQuery('<div id="my-overlay"> </div>');
-  var imgURL = chrome.extension.getURL("spinner.gif");
-  var spinner = jQuery('<div id="my-overlay-spinner"> </div>');
-  spinner.css("background-image", "url(" + imgURL + ")");
+function addOverlay() {
+  var overlay = jQuery('<div id="my-overlay"><div class="loader"></div></div>');
   $('#watch7-sidebar').append(overlay);
-  $('#watch7-sidebar').append(spinner);
 }
 
 function removeOverlay() {
