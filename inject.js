@@ -24,19 +24,25 @@ function options() {
   }
   $(".myoptions").remove();
   var $options = $(`
-<span class="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a class="toggle">turn ${bgOn ? "off" : "on"}</a></span>
-`);
-  $mySearch.append($options.clone());
-  $originalSearch.append($options.clone());
+<div class="myoptions checkbox-on-off">
+       <label for="background-checkbox">Background search</label>
+          <span class="yt-uix-checkbox-on-off ">
+<input class="background-checkbox" class="" type="checkbox"><label for="background-checkbox" id="background-checkbox-label"><span class="checked"></span><span class="toggle"></span><span class="unchecked"></span></label>  </span>
 
-  $(".toggle").click(function() {
+      </div>
+`);
+  $options.insertAfter($(".checkbox-on-off"));
+  $(".background-checkbox").prop("checked", bgOn);
+  $(".myoptions").css("right", "140px");
+  
+  $(".background-checkbox").click(function () {
     if (getCookie("bgOn") == "true") {
       setCookie("bgOn", "false", 1000);
-      changeSearchBar(); 
     } else {
       setCookie("bgOn", "true", 1000);
     }
-    options();
+    changeSearchBar(); 
+    $(".background-checkbox").prop("checked", bgOn);
   });
 }
 
@@ -68,12 +74,13 @@ function setupSearchBar() {
 function changeSearchBar() {
     // If this is a video
     if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
-      $mySearch.find("input").val($originalSearch.find("input").val());
       bgOn = getCookie("bgOn") == "true"; 
       if (bgOn) { 
+        $mySearch.find("input").val($originalSearch.find("input").val());
         $mySearch.show();
         $originalSearch.hide();
       } else {
+        $originalSearch.find("input").val($mySearch.find("input").val());
         $originalSearch.show();
         $mySearch.hide();
       }
@@ -88,8 +95,7 @@ function changeSearchBar() {
 function runThisLittleBeastInstead() {
   if($mySearch.find("input").val() == "") return;
   addOverlay();
-  return;
-  //getSearchResults();
+  getSearchResults();
 }
 
 function addOverlay() {
@@ -116,7 +122,6 @@ function getSearchResults() {
 
 function replaceSidebar(data, query) {
   $nodes = $(data).find(".yt-lockup");
-  //console.log($nodes);  
 
   var newNodes = []; 
   $nodes.each(function() {
@@ -131,7 +136,6 @@ function replaceSidebar(data, query) {
   })
   
   removeOverlay();
-  //console.log(newNodes);
 }
 
 function createNewSideRes($normalSearchResult) {
@@ -147,8 +151,6 @@ function createNewSideRes($normalSearchResult) {
 
   if (typeof image === "undefined")
     image = $normalSearchResult.find(".yt-thumb-simple img").attr("src");
-//console.log($normalSearchResult.find(".yt-thumb-simple img")[0]);
-//console.log(image);
 $newRes = $(`
 <li class="video-list-item related-list-item related-list-item-compact-video">
   <div class="content-wrapper">
@@ -189,6 +191,7 @@ $newRes = $(`
 // On page "reload" - youtube is kinda a single page app so
 // listen in bg.js for page reloads
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  setTimeout(options, 1000);
   changeSearchBar();
 });
 
