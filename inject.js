@@ -1,5 +1,6 @@
 var $originalSearch;
 var $mySearch;
+var bgOn;
 
 $(document).ready(function(){
   saveSearchBars();
@@ -15,26 +16,27 @@ function saveSearchBars() {
 }
 
 function options() {
-  var bgOn = getCookie("bgOn") == "true";
+  bgOn = getCookie("bgOn") == "true";
   if (bgOn == null)
   {
     setCookie("bgOn", "true", 1000);
     bgOn = getCookie("bgOn") == "true";
   }
+  $(".myoptions").remove();
   var $options = $(`
-<span id="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a class="toggle">turn ${bgOn ? "off" : "on"}</a></span>
+<span class="myoptions">Background search is <b class="bg-value">${bgOn ? "on" : "off"}</b> <a class="toggle">turn ${bgOn ? "off" : "on"}</a></span>
 `);
-  console.log($options.clone());
-  $originalSearch.append($options.clone());
   $mySearch.append($options.clone());
+  $originalSearch.append($options.clone());
 
   $(".toggle").click(function() {
-    console.log(getCookie("bgOn"));
     if (getCookie("bgOn") == "true") {
       setCookie("bgOn", "false", 1000);
+      changeSearchBar(); 
     } else {
       setCookie("bgOn", "true", 1000);
     }
+    options();
   });
 }
 
@@ -67,9 +69,14 @@ function changeSearchBar() {
     // If this is a video
     if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
       $mySearch.find("input").val($originalSearch.find("input").val());
- 
-      $mySearch.show();
-      $originalSearch.hide();
+      bgOn = getCookie("bgOn") == "true"; 
+      if (bgOn) { 
+        $mySearch.show();
+        $originalSearch.hide();
+      } else {
+        $originalSearch.show();
+        $mySearch.hide();
+      }
     } else {
       $originalSearch.find("input").val($mySearch.find("input").val());
 
@@ -144,7 +151,7 @@ function createNewSideRes($normalSearchResult) {
   if (typeof image === "undefined")
     image = $normalSearchResult.find(".yt-thumb-simple img").attr("src");
 //console.log($normalSearchResult.find(".yt-thumb-simple img")[0]);
-console.log(image);
+//console.log(image);
 $newRes = $(`
 <li class="video-list-item related-list-item related-list-item-compact-video">
   <div class="content-wrapper">
