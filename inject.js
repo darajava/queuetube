@@ -253,9 +253,11 @@ $newRes = $(`
 // On page "reload" - youtube is kinda a single page app so
 // listen in bg.js for page reloads
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  setTimeout(options, 1000);
-  changeSearchBar();
-  regeneratePlaylist();
+  setTimeout(function(){
+    options();
+    changeSearchBar();
+    regeneratePlaylist();
+  }, 1000);
 });
 
 function setCookie(name, value, days) {
