@@ -5,10 +5,12 @@ var bgOn;
 $(document).ready(function(){
   saveSearchBars();
   options();
+  regeneratePlaylist();
   changeSearchBar();
 });
 
 $("video").bind('ended', function(){  
+  alert();
   document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
 });
 
@@ -162,7 +164,14 @@ function regeneratePlaylist() {
   var autoplayCookies = getCookieByMatch(/^(playlistvid\d+)/).sort();
   console.log(autoplayCookies);
   autoplayCookies.forEach(function(entry) {
-    $(".autoplay-bar ul").append($(getCookie(entry)));
+    $playlistItem = $(getCookie(entry));
+    // if this video is currently playing, remove it from playlist 
+    if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
+      eraseCookie(entry);
+      return;
+    }
+    $playlistItem.find(".add-to-playlist").remove();
+    $(".autoplay-bar ul").append($playlistItem);
   });
 }
 
@@ -230,6 +239,7 @@ $newRes = $(`
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   setTimeout(options, 1000);
   changeSearchBar();
+  regeneratePlaylist();
 });
 
 function setCookie(name, value, days) {
