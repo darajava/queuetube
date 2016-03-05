@@ -8,6 +8,9 @@ $(document).ready(function(){
   changeSearchBar();
 });
 
+$("video").bind('ended', function(){
+    //alert("Poopie");
+});
 
 function saveSearchBars() {
   $originalSearch = $("#masthead-search");
@@ -134,8 +137,32 @@ function replaceSidebar(data, query) {
   newNodes.forEach(function(node) {
     $("#watch7-sidebar-contents #watch-related.video-list").append(node);
   })
-  
+
+  $(".add-to-playlist").click(function(e) {
+    e.preventDefault();
+    addToPlaylist($(this).parent().parent().parent(), $(this).data("video-id"));
+  });
+ 
   removeOverlay();
+}
+
+function addToPlaylist($searchElem, videoId) {
+  var i = 0;
+  do {
+    i++;
+  } while(getCookie("playlistvid" + i) != null)  
+  setCookie("playlistvid" + i, $searchElem.prop("outerHTML"));
+
+  regeneratePlaylist();
+}
+
+function regeneratePlaylist() {
+  $(".autoplay-bar li").empty();
+  var i = 1;
+  while(getCookie("playlistvid" + i) != null) {
+    $(".autoplay-bar li").append($(getCookie("playlistvid" + i)));
+    i++;
+  }
 }
 
 function createNewSideRes($normalSearchResult) {
@@ -148,9 +175,12 @@ function createNewSideRes($normalSearchResult) {
   var image = $normalSearchResult.find(".yt-thumb-simple img").data("thumb");
   var url = $normalSearchResult.find(".yt-lockup-title a").attr("href");
   var videoID = url.replace("/watch?v=", "");
-
+  
+  var id = "a" + Math.random().toString(26).slice(10);
+  
   if (typeof image === "undefined")
     image = $normalSearchResult.find(".yt-thumb-simple img").attr("src");
+
 $newRes = $(`
 <li class="video-list-item related-list-item related-list-item-compact-video">
   <div class="content-wrapper">
@@ -167,6 +197,7 @@ $newRes = $(`
       </span>
     </span>
     <span class="stat view-count">${views}</span>
+    <span class="stat add-to-playlist" data-video-id="${url}"><button>Add to playlist</button></span>
   </a>
   </div>
   <div class="thumb-wrapper">
@@ -175,16 +206,10 @@ $newRes = $(`
     <span class="video-time">
       ${duration}
     </span>
-
-  <span class="thumb-menu dark-overflow-action-menu video-actions">
-    <button aria-expanded="false" onclick=";return false;" class="yt-uix-button-reverse flip addto-watch-queue-menu spf-nolink hide-until-delayloaded yt-uix-button yt-uix-button-dark-overflow-action-menu yt-uix-button-size-default yt-uix-button-has-icon no-icon-markup yt-uix-button-empty" type="button" aria-haspopup="true"><span class="yt-uix-button-arrow yt-sprite"></span><ul class="watch-queue-thumb-menu yt-uix-button-menu yt-uix-button-menu-dark-overflow-action-menu hid"><li role="menuitem" class="overflow-menu-choice addto-watch-queue-menu-choice addto-watch-queue-play-next yt-uix-button-menu-item" data-action="play-next" onclick=";return false;" data-video-ids="${videoID}"><span class="addto-watch-queue-menu-text">Play next</span></li><li role="menuitem" class="overflow-menu-choice addto-watch-queue-menu-choice addto-watch-queue-play-now yt-uix-button-menu-item" data-action="play-now" onclick=";return false;" data-video-ids="${videoID}"><span class="addto-watch-queue-menu-text">Play now</span></li></ul></button>
-  </span>
-  <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-default yt-uix-button-empty yt-uix-button-has-icon no-icon-markup addto-button addto-queue-button video-actions spf-nolink hide-until-delayloaded addto-tv-queue-button yt-uix-tooltip" type="button" onclick=";return false;" title="Queue" data-video-ids="${videoID}" data-style="tv-queue"></button>
 </div>
 
 </li>
 `);
-
   return $newRes;
 }
 
