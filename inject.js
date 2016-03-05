@@ -140,30 +140,42 @@ function replaceSidebar(data, query) {
 
   $(".add-to-playlist").click(function(e) {
     e.preventDefault();
-    addToPlaylist($(this).parent().parent().parent(), $(this).data("video-id"));
+    addToPlaylist($(this).parent().parent().parent());
   });
  
   removeOverlay();
 }
 
-function addToPlaylist($searchElem, videoId) {
-  var i = 0;
-  do {
-    i++;
-  } while(getCookie("playlistvid" + i) != null)  
-  setCookie("playlistvid" + i, $searchElem.prop("outerHTML"));
+jQuery.fn.outerHTML = function() {
+  return jQuery('<div />').append(this.eq(0).clone()).html();
+};
+
+function addToPlaylist($searchElem) {
+  setCookie("playlistvid" + Date.now(), $searchElem.outerHTML());
 
   regeneratePlaylist();
 }
 
 function regeneratePlaylist() {
-  $(".autoplay-bar li").empty();
+  $(".autoplay-bar ul").empty();
   var i = 1;
-  while(getCookie("playlistvid" + i) != null) {
-    $(".autoplay-bar li").append($(getCookie("playlistvid" + i)));
-    i++;
-  }
+  var autoplayCookies = getCookieByMatch(/^(playlistvid\d+)/).sort();
+  console.log(autoplayCookies);
+  autoplayCookies.forEach(function(entry) {
+    $(".autoplay-bar ul").append($(getCookie(entry)));
+  });
 }
+
+function getCookieByMatch(regex) {
+  var match, cs=document.cookie.split(/;\s*/), ret=[], i;
+  for (i=0; i<cs.length; i++) {
+    match = regex.exec(cs[i]);
+    if (match != null && typeof match[1] !== "undefined") {
+      ret.push(match[1]);
+    }
+  }
+  return ret;
+};
 
 function createNewSideRes($normalSearchResult) {
   var duration = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
