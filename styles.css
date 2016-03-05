@@ -1,3 +1,31 @@
+.add-playlist {
+	box-shadow:inset 0px 1px 0px 0px #cf866c;
+	background-color:#d40000;
+	border-radius:2px;
+	border:1px solid #941212;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:11px;
+	padding:1px 10px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #854629;
+}
+.add-playlist:hover {
+	background:linear-gradient(to bottom, #db0404 5%, #d40000 100%);
+	background-color:#db0404;
+}
+.add-playlist:active {
+	position:relative;
+	top:1px;
+}
+
+.content-wrapper .title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 #my-overlay {
     position: absolute;
     top: 0;

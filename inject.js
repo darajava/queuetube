@@ -218,7 +218,7 @@ $newRes = $(`
       </span>
     </span>
     <span class="stat view-count">${views}</span>
-    <span class="stat add-to-playlist" data-video-id="${url}"><button>Add to playlist</button></span>
+    <span class="stat add-to-playlist" data-video-id="${url}"><button class="add-playlist">Add to playlist</button></span>
   </a>
   </div>
   <div class="thumb-wrapper">
