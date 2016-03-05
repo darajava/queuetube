@@ -8,8 +8,8 @@ $(document).ready(function(){
   changeSearchBar();
 });
 
-$("video").bind('ended', function(){
-    //alert("Poopie");
+$("video").bind('ended', function(){  
+  document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
 });
 
 function saveSearchBars() {
