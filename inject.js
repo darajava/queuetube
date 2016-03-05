@@ -168,7 +168,7 @@ function regeneratePlaylist() {
   // Keep the original autoplay vid if we have none queued
   if (autoplayCookies.length == 0) return null; 
   $(".autoplay-bar ul").empty();
-  autoplayCookies.forEach(function(entry) {
+  autoplayCookies.forEach(function(entry, idx, array) {
     $playlistItem = $(getCookie(entry));
     // if this video is currently playing, remove it from playlist 
     if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
@@ -176,7 +176,13 @@ function regeneratePlaylist() {
       return;
     }
     $playlistItem.find(".add-to-playlist").remove();
-    $(".autoplay-bar ul").append($playlistItem);
+    if (idx === array.length - 1) { 
+      $playlistItem.hide();
+      $(".autoplay-bar ul").append($playlistItem);
+      $playlistItem.slideDown();
+    } else {
+      $(".autoplay-bar ul").append($playlistItem);
+    }
   });
 }
 
