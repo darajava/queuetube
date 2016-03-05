@@ -10,7 +10,6 @@ $(document).ready(function(){
 });
 
 $("video").bind('ended', function(){  
-  alert();
   document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
 });
 
@@ -129,8 +128,11 @@ function replaceSidebar(data, query) {
   $nodes = $(data).find(".yt-lockup");
 
   var newNodes = []; 
+  var node;
   $nodes.each(function() {
-    newNodes.push(createNewSideRes($(this)));
+    node = createNewSideRes($(this));
+    if (node != null)
+      newNodes.push(createNewSideRes($(this)));
   });
 
   $("#generated-res").remove();
@@ -159,10 +161,13 @@ function addToPlaylist($searchElem) {
 }
 
 function regeneratePlaylist() {
-  $(".autoplay-bar ul").empty();
   var i = 1;
   var autoplayCookies = getCookieByMatch(/^(playlistvid\d+)/).sort();
   console.log(autoplayCookies);
+  
+  // Keep the original autoplay vid if we have none queued
+  if (autoplayCookies.length == 0) return null; 
+  $(".autoplay-bar ul").empty();
   autoplayCookies.forEach(function(entry) {
     $playlistItem = $(getCookie(entry));
     // if this video is currently playing, remove it from playlist 
@@ -188,6 +193,7 @@ function getCookieByMatch(regex) {
 
 function createNewSideRes($normalSearchResult) {
   var duration = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
+  if (!duration.match(/[0-9]+:[0-9]/)) return;
   var ago = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(1)").text();
   var title = $normalSearchResult.find(".yt-lockup-title a").text();
   var channel = $normalSearchResult.find(".yt-lockup-byline a").text();
