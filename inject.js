@@ -37,7 +37,7 @@ function options() {
 `);
   $options.insertAfter($(".checkbox-on-off"));
   $(".background-checkbox").prop("checked", bgOn);
-  $(".myoptions").css("right", "140px");
+  $(".myoptions").css("right", "104px");
   
   $(".background-checkbox").click(function () {
     if (getCookie("bgOn") == "true") {
@@ -48,6 +48,9 @@ function options() {
     changeSearchBar(); 
     $(".background-checkbox").prop("checked", bgOn);
   });
+
+  $(".autoplay-hovercard.yt-uix-hovercard").remove();
+  $(".watch-sidebar-head").text("Your Playlist:");
 }
 
 function setupSearchBar() {
@@ -145,6 +148,7 @@ function replaceSidebar(data, query) {
   $(".add-to-playlist").click(function(e) {
     e.preventDefault();
     addToPlaylist($(this).parent().parent().parent());
+    $(this).find("button").text("Added!").unbind("click");
   });
  
   removeOverlay();
