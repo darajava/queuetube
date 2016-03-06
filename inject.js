@@ -20,37 +20,43 @@ function saveSearchBars() {
 }
 
 function options() {
-  bgOn = getCookie("bgOn") == "true";
-  if (getCookie("bgOn") == null)
-  {
-    setCookie("bgOn", "true", 1000);
-    bgOn = getCookie("bgOn") == "true";
-  }
-  $(".myoptions").remove();
-  var $options = $(`
-<div class="myoptions checkbox-on-off">
-       <label for="background-checkbox">Background search</label>
-          <span class="yt-uix-checkbox-on-off ">
-<input class="background-checkbox" class="" type="checkbox"><label for="background-checkbox" id="background-checkbox-label"><span class="checked"></span><span class="toggle"></span><span class="unchecked"></span></label>  </span>
-
-      </div>
-`);
-  $options.insertAfter($(".checkbox-on-off"));
-  $(".background-checkbox").prop("checked", bgOn);
-  $(".myoptions").css("right", "104px");
-  
-  $(".background-checkbox").click(function () {
-    if (getCookie("bgOn") == "true") {
-      setCookie("bgOn", "false", 1000);
-    } else {
-      setCookie("bgOn", "true", 1000);
+  chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+    var bgOn = JSON.parse(response.storage);
+    console.log("---> " + bgOn);
+    if (typeof bgOn === undefined)
+    {
+      chrome.extension.sendRequest({storage:"bgOn", value: true});
     }
-    changeSearchBar(); 
-    $(".background-checkbox").prop("checked", bgOn);
-  });
+    $(".myoptions").remove();
 
-  $(".autoplay-hovercard.yt-uix-hovercard").remove();
-  $(".watch-sidebar-head").text("Your Playlist:");
+    var $options = $(`
+       <div class="myoptions checkbox-on-off">
+         <label for="background-checkbox">Background search</label>
+         <span class="yt-uix-checkbox-on-off ">
+         <input class="background-checkbox" class="" type="checkbox"><label for="background-checkbox" id="background-checkbox-label"><span class="checked"></span><span class="toggle"></span><span class="unchecked"></span></label>  </span>
+
+       </div>
+    `);
+    $options.insertAfter($(".checkbox-on-off"));
+    $(".background-checkbox").prop("checked", bgOn);
+    $(".myoptions").css("right", "104px");
+  
+    $(".background-checkbox").click(function () {
+      chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+        if (JSON.parse(response.storage)) {
+          chrome.extension.sendRequest({storage:"bgOn", value: false});
+        } else {
+          chrome.extension.sendRequest({storage:"bgOn", value: true});
+        }
+        changeSearchBar();
+        options(); 
+        $(".background-checkbox").prop("checked", bgOn);
+      });
+    });
+
+    $(".autoplay-hovercard.yt-uix-hovercard").remove();
+    $(".watch-sidebar-head").text("Your Playlist:");
+  });
 }
 
 function setupSearchBar() {
@@ -79,9 +85,10 @@ function setupSearchBar() {
 }
 
 function changeSearchBar() {
-    // If this is a video
-    if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
-      bgOn = getCookie("bgOn") == "true"; 
+  // If this is a video
+  if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
+    chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+      var bgOn = JSON.parse(response.storage);
       if (bgOn) { 
         $mySearch.find("input").val($originalSearch.find("input").val());
         $mySearch.show();
@@ -91,12 +98,13 @@ function changeSearchBar() {
         $originalSearch.show();
         $mySearch.hide();
       }
-    } else {
-      $originalSearch.find("input").val($mySearch.find("input").val());
+    });
+  } else {
+    $originalSearch.find("input").val($mySearch.find("input").val());
 
-      $mySearch.hide();
-      $originalSearch.show();
-    }
+    $mySearch.hide();
+    $originalSearch.show();
+  }
 }
 
 function runThisLittleBeastInstead() {
@@ -166,21 +174,21 @@ function addToPlaylist($searchElem) {
 
 function regeneratePlaylist() {
   var i = 1;
-  var autoplayCookies = getCookieByMatch(/^(playlistvid\d+)/).sort();
+  var autoplayCookies = null;//getCookieByMatch(/^(playlistvid\d+)/).sort();
   console.log(autoplayCookies);
   
   // Keep the original autoplay vid if we have none queued
   if (autoplayCookies.length == 0) return null; 
   $(".autoplay-bar ul").empty();
   autoplayCookies.forEach(function(entry, idx, array) {
-    $playlistItem = $(getCookie(entry));
+    $playlistItem = $(getLocalstorage(entry));
     // if this video is currently playing, remove it from playlist 
     if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
-      eraseCookie(entry);
+      eraseLocalstorage(entry);
       return;
     }
     $playlistItem.find(".add-to-playlist").remove();
-    if (idx === array.length - 1) { 
+    if (idx === array.length - 1) {
       $playlistItem.hide();
       $(".autoplay-bar ul").append($playlistItem);
       $playlistItem.slideDown();
@@ -189,17 +197,6 @@ function regeneratePlaylist() {
     }
   });
 }
-
-function getCookieByMatch(regex) {
-  var match, cs=document.cookie.split(/;\s*/), ret=[], i;
-  for (i=0; i<cs.length; i++) {
-    match = regex.exec(cs[i]);
-    if (match != null && typeof match[1] !== "undefined") {
-      ret.push(match[1]);
-    }
-  }
-  return ret;
-};
 
 function createNewSideRes($normalSearchResult) {
   var duration = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
@@ -253,6 +250,7 @@ $newRes = $(`
 // On page "reload" - youtube is kinda a single page app so
 // listen in bg.js for page reloads
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  // sucks, but this timeout needs to be here
   setTimeout(function(){
     options();
     changeSearchBar();
@@ -260,30 +258,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }, 1000);
 });
 
-function setCookie(name, value, days) {
-  var expires;
-
-  if (days) {
-    var date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toGMTString();
-  } else {
-    expires = "";
-  }
-  document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
-}
-
-function getCookie(name) {
-  var nameEQ = encodeURIComponent(name) + "=";
-  var ca = document.cookie.split(';');
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
-  }
-  return null;
-}
-
-function eraseCookie(name) {
-    setCookie(name, "", -1);
-}
+function getLocalstorageByMatch(regex) {
+  var result;
+  chrome.extension.sendRequest({keys: true}, function(response){
+    result = response.results;
+    console.log(result);
+  });
+  return result;
+};
