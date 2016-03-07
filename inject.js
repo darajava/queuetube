@@ -21,12 +21,14 @@ function saveSearchBars() {
 
 function options() {
   chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
-    var bgOn = JSON.parse(response.storage);
-    console.log("---> " + bgOn);
-    if (typeof bgOn === undefined)
-    {
+    var bgOn;
+    if (typeof autoplaylist === "undefined") {
       chrome.extension.sendRequest({storage:"bgOn", value: true});
+      bgOn = true;
+    } else {
+      bgOn = JSON.parse(response.storage);
     }
+    console.log("---> " + bgOn);
     $(".myoptions").remove();
 
     var $options = $(`
@@ -88,7 +90,9 @@ function changeSearchBar() {
   // If this is a video
   if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
     chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
-      var bgOn = JSON.parse(response.storage);
+      var bgOn;
+      if (typeof autoplaylist === "undefined") bgOn = true;
+      else bgOn = JSON.parse(response.storage);
       if (bgOn) { 
         $mySearch.find("input").val($originalSearch.find("input").val());
         $mySearch.show();
@@ -167,33 +171,46 @@ jQuery.fn.outerHTML = function() {
 };
 
 function addToPlaylist($searchElem) {
-  setCookie("playlistvid" + Date.now(), $searchElem.outerHTML());
-
+  chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+    var list;
+    if (typeof response.storage === "undefined") {
+      list = [$searchElem.outerHTML()];
+    } else {
+      list = JSON.parse(response.storage);
+      list.push($searchElem.outerHTML());
+    }
+    console.log(list);
+    chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(list)});
+  });
   regeneratePlaylist();
 }
 
 function regeneratePlaylist() {
-  var i = 1;
-  var autoplayCookies = null;//getCookieByMatch(/^(playlistvid\d+)/).sort();
-  console.log(autoplayCookies);
+  chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+    console.log(autoplaylist);
+    if (typeof response.storage === "undefined") return;
+    var autoplaylist = JSON.parse(response.storage);
   
-  // Keep the original autoplay vid if we have none queued
-  if (autoplayCookies.length == 0) return null; 
-  $(".autoplay-bar ul").empty();
-  autoplayCookies.forEach(function(entry, idx, array) {
-    $playlistItem = $(getLocalstorage(entry));
-    // if this video is currently playing, remove it from playlist 
-    if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
-      eraseLocalstorage(entry);
-      return;
-    }
-    $playlistItem.find(".add-to-playlist").remove();
-    if (idx === array.length - 1) {
-      $playlistItem.hide();
-      $(".autoplay-bar ul").append($playlistItem);
-      $playlistItem.slideDown();
-    } else {
-      $(".autoplay-bar ul").append($playlistItem);
+    // Keep the original autoplay vid if we have none queued
+    if (autoplaylist.length == 0) return null; 
+    $(".autoplay-bar ul").empty();
+    for (var i = 0; i < autoplaylist.length; ++i) {
+      $playlistItem = $(autoplaylist[i]);
+      console.log($playlistItem);
+      // if this video is currently playing, remove it from playlist 
+      if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
+        autoplaylist.splice(i--, 1);
+        chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
+        return; // this actually means continue
+      }
+      $playlistItem.find(".add-to-playlist").remove();
+      if (i === autoplaylist.length - 1) {
+        $playlistItem.hide();
+        $(".autoplay-bar ul").append($playlistItem);
+        $playlistItem.slideDown();
+      } else {
+        $(".autoplay-bar ul").append($playlistItem);
+      }
     }
   });
 }
@@ -257,12 +274,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     regeneratePlaylist();
   }, 1000);
 });
-
-function getLocalstorageByMatch(regex) {
-  var result;
-  chrome.extension.sendRequest({keys: true}, function(response){
-    result = response.results;
-    console.log(result);
-  });
-  return result;
-};
