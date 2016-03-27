@@ -1,6 +1,8 @@
 chrome.runtime.onInstalled.addListener(function(details){
-  localStorage['bgOn'] = 'true';
-  setText();
+  if (details.reason == "install") {
+    localStorage['bgOn'] = 'true';
+    setText();
+  }
 });
 
 
