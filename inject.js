@@ -144,8 +144,8 @@ function addToPlaylist($searchElem) {
       list.push($searchElem.outerHTML());
     }
     chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(list)});
+    regeneratePlaylist();
   });
-  regeneratePlaylist();
 }
 
 function regeneratePlaylist() {
@@ -165,13 +165,7 @@ function regeneratePlaylist() {
         continue; 
       }
       $playlistItem.find(".add-to-playlist").remove();
-      if (i === autoplaylist.length - 1) {
-        $playlistItem.hide();
-        $(".autoplay-bar ul").append($playlistItem);
-        $playlistItem.slideDown();
-      } else {
-        $(".autoplay-bar ul").append($playlistItem);
-      }
+      $(".autoplay-bar ul").append($playlistItem);
     }
   });
 }
