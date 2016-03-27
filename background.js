@@ -24,6 +24,10 @@ chrome.extension.onConnect.addListener(function(port) {
   });
 });
 
-setBg = function(bgOn) {
-  localStorage['daBgOn'] = bgOn;
+getBg = function() {
+  return localStorage['bgOn'];
 }
+setBg = function(bgOn) {
+  localStorage['bgOn'] = bgOn;
+}
+

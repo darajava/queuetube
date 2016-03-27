@@ -3,14 +3,27 @@ var $mySearch;
 var bgOn;
 
 $(document).ready(function(){
-  chrome.extension.sendRequest({storage:"daBgOn"}, function(response) {
-    console.log("daBgOn: " + response.storage);
+  chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+    bgOn = JSON.parse(response.storage);
+    saveSearchBars();
+    regeneratePlaylist();
+    changeSearchBar();
   });
-  return; 
-  saveSearchBars();
-  options();
-  regeneratePlaylist();
-  changeSearchBar();
+});
+
+// On page "reload" - youtube is kinda a single page app so
+// listen in bg.js for page reloads
+// TODO: don't have this run on first page reload and share code 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  // sucks, but this timeout needs to be here
+  setTimeout(function(){
+    chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+      bgOn = JSON.parse(response.storage);
+      console.log(bgOn + " -  - - -"); 
+      changeSearchBar();
+      regeneratePlaylist();
+    });
+  }, 1000);
 });
 
 $("video").bind('ended', function(){  
@@ -21,48 +34,6 @@ function saveSearchBars() {
   $originalSearch = $("#masthead-search");
   $mySearch = setupSearchBar();
   $("#yt-masthead-content").append($mySearch);
-}
-
-function options() {
-  chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
-    var bgOn;
-    if (typeof autoplaylist === "undefined") {
-      chrome.extension.sendRequest({storage:"bgOn", value: true});
-      bgOn = true;
-    } else {
-      bgOn = JSON.parse(response.storage);
-    }
-    console.log("---> " + bgOn);
-    $(".myoptions").remove();
-
-    var $options = $(`
-       <div class="myoptions checkbox-on-off">
-         <label for="background-checkbox">Background search</label>
-         <span class="yt-uix-checkbox-on-off ">
-         <input class="background-checkbox" class="" type="checkbox"><label for="background-checkbox" id="background-checkbox-label"><span class="checked"></span><span class="toggle"></span><span class="unchecked"></span></label>  </span>
-
-       </div>
-    `);
-    $options.insertAfter($(".checkbox-on-off"));
-    $(".background-checkbox").prop("checked", bgOn);
-    $(".myoptions").css("right", "104px");
-  
-    $(".background-checkbox").click(function () {
-      chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
-        if (JSON.parse(response.storage)) {
-          chrome.extension.sendRequest({storage:"bgOn", value: false});
-        } else {
-          chrome.extension.sendRequest({storage:"bgOn", value: true});
-        }
-        changeSearchBar();
-        options(); 
-        $(".background-checkbox").prop("checked", bgOn);
-      });
-    });
-
-    $(".autoplay-hovercard.yt-uix-hovercard").remove();
-    $(".watch-sidebar-head").text("Your Playlist:");
-  });
 }
 
 function setupSearchBar() {
@@ -91,22 +62,11 @@ function setupSearchBar() {
 }
 
 function changeSearchBar() {
-  // If this is a video
-  if(window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
-    chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
-      var bgOn;
-      if (typeof autoplaylist === "undefined") bgOn = true;
-      else bgOn = JSON.parse(response.storage);
-      if (bgOn) { 
-        $mySearch.find("input").val($originalSearch.find("input").val());
-        $mySearch.show();
-        $originalSearch.hide();
-      } else {
-        $originalSearch.find("input").val($mySearch.find("input").val());
-        $originalSearch.show();
-        $mySearch.hide();
-      }
-    });
+  // If this is a video, and we have background searching switched on
+  if(bgOn && window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
+    $mySearch.find("input").val($originalSearch.find("input").val());
+    $mySearch.show();
+    $originalSearch.hide();
   } else {
     $originalSearch.find("input").val($mySearch.find("input").val());
 
@@ -183,7 +143,6 @@ function addToPlaylist($searchElem) {
       list = JSON.parse(response.storage);
       list.push($searchElem.outerHTML());
     }
-    console.log(list);
     chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(list)});
   });
   regeneratePlaylist();
@@ -191,7 +150,6 @@ function addToPlaylist($searchElem) {
 
 function regeneratePlaylist() {
   chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
-    console.log(autoplaylist);
     if (typeof response.storage === "undefined") return;
     var autoplaylist = JSON.parse(response.storage);
   
@@ -200,7 +158,6 @@ function regeneratePlaylist() {
     $(".autoplay-bar ul").empty();
     for (var i = 0; i < autoplaylist.length; ++i) {
       $playlistItem = $(autoplaylist[i]);
-      console.log($playlistItem);
       // if this video is currently playing, remove it from playlist 
       if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
         autoplaylist.splice(i--, 1);
@@ -267,15 +224,3 @@ $newRes = $(`
 `);
   return $newRes;
 }
-
-// On page "reload" - youtube is kinda a single page app so
-// listen in bg.js for page reloads
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  // sucks, but this timeout needs to be here
-  /*setTimeout(function(){
-    options();
-    changeSearchBar();
-    regeneratePlaylist();
-  }, 1000);
-  */
-});
