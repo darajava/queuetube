@@ -13,6 +13,7 @@
     "page":"bg.html"
   },
   "browser_action": {
+    "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
   "web_accessible_resources": [

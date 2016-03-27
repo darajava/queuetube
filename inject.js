@@ -4,7 +4,12 @@ var bgOn;
 
 $(document).ready(function(){
   chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
-    bgOn = JSON.parse(response.storage);
+    if (response.storage == 'undefined') {
+      bgOn = true;
+    }
+    else {  
+      bgOn = JSON.parse(response.storage);
+    }
     saveSearchBars();
     regeneratePlaylist();
     changeSearchBar();
@@ -19,15 +24,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   setTimeout(function(){
     chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
       bgOn = JSON.parse(response.storage);
-      console.log(bgOn + " -  - - -"); 
       changeSearchBar();
       regeneratePlaylist();
     });
   }, 1000);
 });
 
-$("video").bind('ended', function(){  
-  document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
+$("video").bind('ended', function(){
+  // play the next video after a second
+  if ($("#autoplay-checkbox").is(":checked"))
+    setTimeout(function() {
+      document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
+    }, 1000);
 });
 
 function saveSearchBars() {

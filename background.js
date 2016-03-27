@@ -1,4 +1,9 @@
-// Background Page
+chrome.runtime.onInstalled.addListener(function(details){
+  localStorage['bgOn'] = 'true';
+  setText();
+});
+
+
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   if (request.storage) {
     if (typeof request.value != 'undefined') {
@@ -24,10 +29,20 @@ chrome.extension.onConnect.addListener(function(port) {
   });
 });
 
+function setText() {
+  chrome.browserAction.setBadgeText({   
+    text: localStorage['bgOn'] === "true" ? "ON" : "OFF"
+  });
+}
+
+setText();
+
 getBg = function() {
   return localStorage['bgOn'];
-}
+};
+
 setBg = function(bgOn) {
   localStorage['bgOn'] = bgOn;
-}
+  setText();
+};
 
