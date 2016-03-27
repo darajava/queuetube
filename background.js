@@ -17,3 +17,13 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
     });
   }
 });
+
+chrome.extension.onConnect.addListener(function(port) {
+  port.onMessage.addListener(function(msg) {
+        console.log("message recieved"+ msg);
+  });
+});
+
+setBg = function(bgOn) {
+  localStorage['daBgOn'] = bgOn;
+}

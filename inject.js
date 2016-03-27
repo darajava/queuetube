@@ -3,6 +3,10 @@ var $mySearch;
 var bgOn;
 
 $(document).ready(function(){
+  chrome.extension.sendRequest({storage:"daBgOn"}, function(response) {
+    console.log("daBgOn: " + response.storage);
+  });
+  return; 
   saveSearchBars();
   options();
   regeneratePlaylist();
@@ -201,7 +205,7 @@ function regeneratePlaylist() {
       if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
         autoplaylist.splice(i--, 1);
         chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
-        return; // this actually means continue
+        continue; 
       }
       $playlistItem.find(".add-to-playlist").remove();
       if (i === autoplaylist.length - 1) {
@@ -268,9 +272,10 @@ $newRes = $(`
 // listen in bg.js for page reloads
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // sucks, but this timeout needs to be here
-  setTimeout(function(){
+  /*setTimeout(function(){
     options();
     changeSearchBar();
     regeneratePlaylist();
   }, 1000);
+  */
 });
