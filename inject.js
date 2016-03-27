@@ -153,9 +153,6 @@ function regeneratePlaylist() {
     if (typeof response.storage === "undefined") return;
     var autoplaylist = JSON.parse(response.storage);
   
-    // Keep the original autoplay vid if we have none queued
-    if (autoplaylist.length == 0) return null; 
-    $(".autoplay-bar ul").empty();
     for (var i = 0; i < autoplaylist.length; ++i) {
       $playlistItem = $(autoplaylist[i]);
       // if this video is currently playing, remove it from playlist 
@@ -164,6 +161,14 @@ function regeneratePlaylist() {
         chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
         continue; 
       }
+    }
+
+    // Keep the original autoplay vid if we have none queued
+    if (autoplaylist.length == 0) return null;
+
+    $(".autoplay-bar ul").empty();
+    for (var i = 0; i < autoplaylist.length; ++i) {
+      $playlistItem = $(autoplaylist[i]);
       $playlistItem.find(".add-to-playlist").remove();
       $(".autoplay-bar ul").append($playlistItem);
     }
