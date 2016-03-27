@@ -180,6 +180,26 @@ function regeneratePlaylist() {
       $playlistItem.find(".add-to-playlist").remove();
       $(".autoplay-bar ul").append($playlistItem);
     }
+
+    setNextButton();
+  });
+}
+
+function setNextButton() {
+  $(".mynext").remove();
+  $("<a class='mynext'/>").css({
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    left: 0,
+    top: 0,
+    zIndex: 1000000,  // to be on the safe side
+    background: "rgba(0, 0, 0.5, 0.5)"
+  }).appendTo($(".ytp-next-button").css("position", "relative").css("z-index", "-1000000")); // to be extra safe 
+  
+  // TODO: Get this working
+  $(".mynext").click(function(e){
+    document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
   });
 }
 
