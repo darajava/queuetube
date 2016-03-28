@@ -192,6 +192,32 @@ function regeneratePlaylist() {
     for (var i = 0; i < autoplaylist.length; ++i) {
       $playlistItem = $(autoplaylist[i]);
       $playlistItem.find(".add-to-playlist").remove();
+
+      $removeButton = $('<span class="stat add-to-playlist"><button data-href="' + $playlistItem.data('href') + '" class="add-playlist">Remove</button></span>');
+      $removeButton.click(function(e){
+        var target = $(e.target);
+        chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+          if (typeof response.storage === "undefined") return;
+          var autoplaylist = JSON.parse(response.storage);
+          
+          for (var i = 0; i < autoplaylist.length; ++i) {
+            console.log(target.data('href'));
+            console.log($(autoplaylist[i]).data('href')); 
+            if (target.data('href') == $(autoplaylist[i]).data('href')) {
+              console.log("EQUIV!!");
+              autoplaylist.splice(i--, 1);
+              chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
+            }
+          }
+
+          regeneratePlaylist();
+        });
+	e.stopPropagation();
+        e.preventDefault();
+        return false;
+      });
+
+      $playlistItem.find(".view-count").append($removeButton);
       $(".autoplay-bar ul").append($playlistItem);
     }
   });
@@ -215,7 +241,7 @@ function createNewSideRes($normalSearchResult) {
     image = $normalSearchResult.find(".yt-thumb-simple img").attr("src");
 
 $newRes = $(`
-<li class="video-list-item related-list-item related-list-item-compact-video">
+<li data-href="${url}" class="video-list-item related-list-item related-list-item-compact-video">
   <div class="content-wrapper">
   <a href="${url}" class="yt-uix-sessionlink content-link spf-link" title="${title}">
     <span class="title">
