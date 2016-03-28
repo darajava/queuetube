@@ -201,10 +201,7 @@ function regeneratePlaylist() {
           var autoplaylist = JSON.parse(response.storage);
           
           for (var i = 0; i < autoplaylist.length; ++i) {
-            console.log(target.data('href'));
-            console.log($(autoplaylist[i]).data('href')); 
             if (target.data('href') == $(autoplaylist[i]).data('href')) {
-              console.log("EQUIV!!");
               autoplaylist.splice(i--, 1);
               chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
             }
