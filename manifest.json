@@ -3,7 +3,7 @@
 
   "name": "YouTube Smooth",
   "description": "Search YouTube without stopping the video!",
-  "version": "1.0",
+  "version": "0.95",
   "author": "Dara Javaherian",
     
   "permissions": ["tabs", "http://*/*", "https://*/*"],
