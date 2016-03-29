@@ -223,7 +223,12 @@ function regeneratePlaylist() {
 
 function createNewSideRes($normalSearchResult) {
   var duration = $normalSearchResult.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
-  if (!duration.match(/[0-9]+:[0-9]/)) return;
+  
+  var addToPlaylist = "";
+  // if we don't have a video (i.e. playlist or channel), disallow adding to playlist
+  if (!duration.match(/[0-9]+:[0-9]/)) {
+    addToPlaylist = "hidden";
+  }
   var ago = $normalSearchResult.find(".yt-lockup-meta-info li:nth-child(1)").text();
   var title = $normalSearchResult.find(".yt-lockup-title a").text();
   var channel = $normalSearchResult.find(".yt-lockup-byline a").text();
@@ -254,7 +259,7 @@ $newRes = $(`
       </span>
     </span>
     <span class="stat view-count">${views}</span>
-    <span class="stat add-to-playlist" data-video-id="${url}"><button class="add-playlist">Add to playlist</button></span>
+    <span class="stat add-to-playlist" data-video-id="${url}"><button class=" ${addToPlaylist} add-playlist">Add to playlist</button></span>
   </a>
   </div>
   <div class="thumb-wrapper">

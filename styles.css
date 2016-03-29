@@ -21,6 +21,10 @@
 	top:1px;
 }
 
+.hidden {
+  display: none;
+}
+
 .content-wrapper .title {
     text-overflow: ellipsis;
     white-space: nowrap;
