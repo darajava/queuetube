@@ -49,7 +49,7 @@ $("video").bind('ended', function(){
   if ($("#autoplay-checkbox").is(":checked"))
     setTimeout(function() {
       document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
-    }, 1000);
+    }, 3000);
 });
 
 function saveSearchBars() {
