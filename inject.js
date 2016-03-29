@@ -194,7 +194,9 @@ function regeneratePlaylist() {
       $playlistItem = $(autoplaylist[i]);
       $playlistItem.find(".add-to-playlist").remove();
 
-      $removeButton = $('<span class="stat add-to-playlist"><button data-href="' + $playlistItem.data('href') + '" class="add-playlist">Remove</button></span>');
+      $buttonsContainer = $('<span class="stat add-to-playlist"></span>');
+
+      $removeButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist">Remove</button>');
       $removeButton.click(function(e){
         var target = $(e.target);
         chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
@@ -215,11 +217,62 @@ function regeneratePlaylist() {
         e.preventDefault();
         return false;
       });
+      $buttonsContainer.append($removeButton);
 
-      $playlistItem.find(".view-count").append($removeButton);
+      if (autoplaylist.length > 1) {
+        $upButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist" alt="Move up">&#x25B2;</button>');
+        $downButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist" alt="Move down">&#x25BC;</button>');
+
+        $upButton.click(function(e) { movePlaylistItem(true, e)});
+        $downButton.click(function(e) { movePlaylistItem(false, e)});
+
+        $buttonsContainer.append($upButton);
+        $buttonsContainer.append($downButton);
+      }
+      
+      $playlistItem.find(".view-count").append($buttonsContainer);
+      
       $(".autoplay-bar ul").append($playlistItem);
     }
   });
+}
+
+function movePlaylistItem(up, e) {
+  var target = $(e.target);
+  chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+    if (typeof response.storage === "undefined") return;
+    var autoplaylist = JSON.parse(response.storage);
+
+    for (var i = 0; i < autoplaylist.length; ++i) {
+      if (target.data('href') == $(autoplaylist[i]).data('href')) {
+        var buf;
+        if (up) {
+          if (i > 0) {
+            buf = autoplaylist[i];
+            autoplaylist[i] = autoplaylist[i-1];
+            autoplaylist[i-1] = buf;
+          }
+        } else {
+          if (i < autoplaylist.length - 1) {
+            buf = autoplaylist[i];
+            autoplaylist[i] = autoplaylist[i+1];
+            autoplaylist[i+1] = buf;
+          }
+        }
+
+        chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
+        // Break because we messed up the ordering, so we might be moving this value up again
+        break;
+      }
+    }
+
+    $(".autoplay-bar ul").empty();
+    regeneratePlaylist();
+  });
+  e.stopPropagation();
+  e.preventDefault();
+
+  return false;
 }
 
 function createNewSideRes($normalSearchResult) {
