@@ -208,6 +208,7 @@ function regeneratePlaylist() {
             }
           }
 
+          $(".autoplay-bar ul").empty();
           regeneratePlaylist();
         });
 	e.stopPropagation();
