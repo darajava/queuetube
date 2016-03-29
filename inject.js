@@ -74,8 +74,9 @@ function setupSearchBar() {
 
   $searchBar.find("#my-search-btn").click(runThisLittleBeastInstead);
   $searchBar.find("input").keydown(function(event) {
-    var keycode = (event.keyCode ? event.keyCode : event.which);
-    if (keycode == 13) {
+    if ((event.ctrlKey||event.metaKey) && event.keyCode == 13) {
+      document.location = "https://www.youtube.com/results?search_query=" + encodeURIComponent($(this).val());
+    } else if (event.keyCode == 13) {
       runThisLittleBeastInstead();
     }
   })
