@@ -309,7 +309,7 @@ $newRes = $(`
     </span>
     <span class="stat attribution">
       <span class="g-hovercard">
-        ${title}
+        ${channel}
       </span>
     </span>
     <span class="stat view-count">${views}</span>
