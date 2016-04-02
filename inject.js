@@ -28,6 +28,14 @@ $(document).ready(function(){
     regeneratePlaylist();
     changeSearchBar();
   });
+
+  $("video").bind('ended', function(){
+    // play the next video after a second
+    if ($("#autoplay-checkbox").is(":checked"))
+      setTimeout(function() {
+        document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
+      }, 3000);
+  });
 });
 
 // On page "reload" - youtube is kinda a single page app so
@@ -42,14 +50,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       regeneratePlaylist();
     });
   }, 1000);
-});
-
-$("video").bind('ended', function(){
-  // play the next video after a second
-  if ($("#autoplay-checkbox").is(":checked"))
-    setTimeout(function() {
-      document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
-    }, 3000);
 });
 
 function saveSearchBars() {
