@@ -49,6 +49,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       changeSearchBar();
       regeneratePlaylist();
     });
+    $savedSuggestions = $("#watch-related").clone();
   }, 1000);
 });
 
@@ -126,6 +127,14 @@ function getSearchResults() {
   });
 }
 
+var $savedSuggestions;
+
+function restoreOriginal() {
+  $("#generated-res").remove();
+  $("#watch7-sidebar-contents #watch-related.video-list").empty();
+  $("#watch7-sidebar-contents #watch-related.video-list").append($savedSuggestions.clone());
+}
+
 function replaceSidebar(data, query) {
   $nodes = $(data).find(".yt-lockup");
 
@@ -139,7 +148,11 @@ function replaceSidebar(data, query) {
 
   $("#generated-res").remove();
   $("#watch7-sidebar-contents #watch-related.video-list").empty();
-  $("#watch7-sidebar-contents #watch-related.video-list").append($("<div id='generated-res' class='watch-sidebar-section'>Search results for: <i><b>" + query + "</b></i></div>"));
+  $("#watch7-sidebar-contents #watch-related.video-list").append($("<div id='generated-res' class='watch-sidebar-section'>Search results for: <i><b>" + query + "</b></i> <a id='restore-original'>Show original suggestions</a></div>"));
+
+  $("#restore-original").click(function() {
+    restoreOriginal();
+  });
   newNodes.forEach(function(node) {
     $("#watch7-sidebar-contents #watch-related.video-list").append(node);
   })

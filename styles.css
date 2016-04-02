@@ -1,3 +1,7 @@
+#restore-original {
+  float: right;
+}
+
 .add-playlist {
 	box-shadow:inset 0px 1px 0px 0px #cf866c;
 	background-color:#d40000;
