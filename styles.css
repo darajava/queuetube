@@ -1,5 +1,6 @@
 #restore-original {
-  float: right;
+  float: none;
+  margin-left: 10px;
 }
 
 .add-playlist {

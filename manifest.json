@@ -3,7 +3,7 @@
 
   "name": "YouTube Stay!",
   "description": "Search YouTube without stopping the video, and make your own playlists!",
-  "version": "0.999",
+  "version": "1.0",
   "author": "Dara Javaherian",
     
   "permissions": ["tabs", "http://*/*", "https://*/*"],
