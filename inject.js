@@ -29,13 +29,15 @@ $(document).ready(function(){
     changeSearchBar();
   });
 
-  $("video").bind('ended', function(){
-    // play the next video after a second
-    if ($("#autoplay-checkbox").is(":checked"))
-      setTimeout(function() {
-        document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
-      }, 3000);
-  });
+  setTimeout(function() {
+    $("video").bind('ended', function(){
+      // play the next video after a second
+      if ($("#autoplay-checkbox").is(":checked"))
+        setTimeout(function() {
+          document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
+        }, 3000);
+    });
+  }, 3000);
 });
 
 // On page "reload" - youtube is kinda a single page app so
