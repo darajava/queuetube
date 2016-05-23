@@ -32,10 +32,15 @@ $(document).ready(function(){
   setTimeout(function() {
     $("video").bind('ended', function(){
       // play the next video after a second
-      if ($("#autoplay-checkbox").is(":checked"))
-        setTimeout(function() {
-          document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
-        }, 3000);
+      chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+        console.log(response.storage);
+        console.log(response.storage.length);
+        if (typeof response.storage !== "undefined" && response.storage != "[]" /*fucking localstorage*/ && $("#autoplay-checkbox").is(":checked")) {
+          setTimeout(function() {
+            document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
+          }, 3000);
+        }
+      });
     });
   }, 3000);
 });
