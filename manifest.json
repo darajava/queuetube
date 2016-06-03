@@ -6,7 +6,7 @@
   "version": "1.0.1",
   "author": "Dara Javaherian",
     
-  "permissions": ["tabs", "http://*/*", "https://*/*"],
+  "permissions": ["tabs", "*://*.youtube.com/*"],
   
   "background": {
     "persistent":true,
