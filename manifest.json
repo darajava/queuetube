@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "YouTube Stay!",
+  "name": "QueueTube for YouTube!", 
   "description": "Search YouTube without stopping the video, and make your own playlists!",
   "version": "1.2.1",
   "author": "Dara Javaherian",
