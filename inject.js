@@ -95,14 +95,19 @@ function setupSearchBar() {
 function changeSearchBar() {
   // If this is a video, and we have background searching switched on
   if(bgOn && window.location.href.indexOf("www.youtube.com/watch?v=") != -1) {
-    $mySearch.find("input").val($originalSearch.find("input").val());
-    $mySearch.show();
-    $originalSearch.hide();
+    if (!$mySearch.is(":visible")) {
+      $mySearch.find("input").val($originalSearch.find("input").val());
+      
+      $mySearch.show();
+      $originalSearch.hide();
+    }
   } else {
-    $originalSearch.find("input").val($mySearch.find("input").val());
+    if (!$originalSearch.is(":visible")) {
+      $originalSearch.find("input").val($mySearch.find("input").val());
 
-    $mySearch.hide();
-    $originalSearch.show();
+      $mySearch.hide();
+      $originalSearch.show();
+    }
   }
 }
 
