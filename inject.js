@@ -29,32 +29,32 @@ $(document).ready(function(){
     changeSearchBar();
   });
 
-    onVideoFinished();
+  onVideoFinished();
 
-    function onVideoFinished() {
-      setTimeout(function() {
-        var isAdShowing = $('.ad-showing').length !== 0;
+  function onVideoFinished() {
+    setTimeout(function() {
+      var isAdShowing = $('.ad-showing').length !== 0;
 
-        if(isAdShowing) {
-          onVideoFinished();
-        } else {
-          $("video").bind('ended', videoFinishedHandler);
-        }
+      if (isAdShowing) {
+        onVideoFinished();
+      } else {
+        $("video").bind('ended', videoFinishedHandler);
+      }
 
-        function videoFinishedHandler() {
-          // play the next video after a second
-          chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
-            console.log(response.storage);
-            console.log(response.storage.length);
-            if (typeof response.storage !== "undefined" && response.storage != "[]" /*fucking localstorage*/ && $("#autoplay-checkbox").is(":checked")) {
-              setTimeout(function() {
-                document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
-              }, 3000);
-            }
-          });
-        }
-      }, 3000);
-    }
+      function videoFinishedHandler() {
+        // play the next video after a second
+        chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+          console.log(response.storage);
+          console.log(response.storage.length);
+          if (typeof response.storage !== "undefined" && response.storage != "[]" /*fucking localstorage*/ && $("#autoplay-checkbox").is(":checked")) {
+            setTimeout(function() {
+              document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
+            }, 3000);
+          }
+        });
+      }
+    }, 3000);
+  }
 });
 
 // On page "reload" - youtube is kinda a single page app so
