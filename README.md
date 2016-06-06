@@ -1,4 +1,4 @@
-# YouTube background search
+# SmoothTube - a better youtube
 
 Allows searching YouTube without interrupting the video, by loading the search results in the related video bar. Also give the ability to create an "up next" list, by adding returned results to an ad-hoc playlist.
 
