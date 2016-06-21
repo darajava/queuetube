@@ -44,8 +44,6 @@ $(document).ready(function(){
       function videoFinishedHandler() {
         // play the next video after a second
         chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
-          console.log(response.storage);
-          console.log(response.storage.length);
           if (typeof response.storage !== "undefined" && response.storage != "[]" /*fucking localstorage*/ && $("#autoplay-checkbox").is(":checked")) {
             setTimeout(function() {
               document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
@@ -65,12 +63,25 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   setTimeout(function(){
     chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
       bgOn = JSON.parse(response.storage);
+      addQueueButtonsToSuggestions();
       changeSearchBar();
       regeneratePlaylist();
     });
     $savedSuggestions = $("#watch-related").clone();
-  }, 1000);
+  }, 500);
 });
+
+function addQueueButtonsToSuggestions() {
+  $(".related-list-item").each(function(i, elem) {
+    if (!$(this).hasClass('in-queue')) {
+      url = $(this).find('a.yt-uix-sessionlink.content-link').attr('href');
+      $(this).addClass('in-queue');
+      $(this).attr('data-href', url);
+      $(this).find('.view-count').after($(`<span class="stat add-to-playlist suggestion" data-video-id="${url}"><button class="add-playlist">Add to queue</button></span>`));
+    }
+  });
+  $(".suggestion.add-to-playlist").click(function(e){playlistClick(e, $(this));});
+}
 
 function saveSearchBars() {
   $originalSearch = $("#masthead-search");
@@ -181,13 +192,15 @@ function replaceSidebar(data, query) {
     $("#watch7-sidebar-contents #watch-related.video-list").append(node);
   })
 
-  $(".add-to-playlist").click(function(e) {
-    e.preventDefault();
-    addToPlaylist($(this).parent().parent().parent());
-    $(this).find("button").text("Added!").unbind("click");
-  });
+  $(".add-to-playlist").click(function(e){playlistClick(e, $(this))});
  
   removeOverlay();
+}
+
+function playlistClick(e, elem) {
+  e.preventDefault();
+  addToPlaylist(elem.parent().parent().parent());
+  elem.find("button").text("Added!").unbind("click");
 }
 
 jQuery.fn.outerHTML = function() {
@@ -195,6 +208,7 @@ jQuery.fn.outerHTML = function() {
 };
 
 function addToPlaylist($searchElem) {
+  $searchElem.addClass('in-queue');
   chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
     var list;
     if (typeof response.storage === "undefined") {
@@ -238,6 +252,7 @@ function regeneratePlaylist() {
         var target = $(e.target);
         chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
           if (typeof response.storage === "undefined") return;
+
           var autoplaylist = JSON.parse(response.storage);
           
           for (var i = 0; i < autoplaylist.length; ++i) {

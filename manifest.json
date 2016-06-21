@@ -2,6 +2,7 @@
   "manifest_version": 2,
 
   "name": "QueueTube for YouTube!", 
+  "short_name": "QueueTube", 
   "description": "Search YouTube without stopping the video, and make your own playlists!",
   "version": "1.2.1",
   "author": "Dara Javaherian",
