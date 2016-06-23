@@ -53,6 +53,7 @@ $(document).ready(function(){
       }
     }, 3000);
   }
+  addQueueButtonsToSuggestions();
 });
 
 // On page "reload" - youtube is kinda a single page app so
