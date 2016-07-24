@@ -278,7 +278,7 @@ function regeneratePlaylist() {
         $upButton.click(function(e) { movePlaylistItem(true, e)});
         $downButton.click(function(e) { movePlaylistItem(false, e)});
 
-        $buttonsContainer.append($upButton);
+        $buttonsContainer.prepend($upButton);
         $buttonsContainer.append($downButton);
       }
       
