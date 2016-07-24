@@ -209,6 +209,8 @@ jQuery.fn.outerHTML = function() {
 
 function addToPlaylist($searchElem) {
   $searchElem.addClass('in-queue');
+  // Remove the "new" button found in some suggestions, as it messes things up!
+  $searchElem.find('.yt-badge-list').remove();
   chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
     var list;
     if (typeof response.storage === "undefined") {
