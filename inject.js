@@ -2,6 +2,14 @@ var $originalSearch;
 var $mySearch;
 var bgOn;
 
+// from http://stackoverflow.com/a/31133401/589921
+Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
+    get: function(){
+        return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+    }
+})
+
+
 $(document).ready(function(){
   $("a").click(function(e){
     if (e.currentTarget.className == "ytp-next-button ytp-button") {
@@ -105,7 +113,7 @@ function setupSearchBar() {
 
   $searchBar.find("#my-search-btn").click(runThisLittleBeastInstead);
   $searchBar.find("input").keydown(function(event) {
-    if ((event.ctrlKey||event.metaKey) && event.keyCode == 13) {
+    if (((event.ctrlKey||event.metaKey || !document.querySelector('video').playing) && event.keyCode == 13)) {
       document.location = "https://www.youtube.com/results?search_query=" + encodeURIComponent($(this).val());
     } else if (event.keyCode == 13) {
       runThisLittleBeastInstead();
@@ -199,7 +207,7 @@ function replaceSidebar(data, query) {
 
 function playlistClick(e, elem) {
   e.preventDefault();
-  addToPlaylist(elem.parent().parent().parent().parent());
+  addToPlaylist(elem.parents('li:first'));
   elem.find("button").text("Added!").unbind("click");
 }
 
@@ -374,7 +382,7 @@ $newRes = $(`
   </a>
   </div>
   <div class="thumb-wrapper">
-    <a href="${url}" class="yt-uix-sessionlink thumb-link spf-link" tabindex="-1"><span class="yt-uix-simple-thumb-wrap yt-uix-simple-thumb-related" tabindex="0"><img aria-hidden="true" width="120" alt="" src="${image}" height="90"></span>
+    <a href="${url}" class="yt-uix-sessionlink thumb-link spf-link" tabindex="-1"><span class="yt-uix-simple-thumb-wrap yt-uix-simple-thumb-related" tabindex="0"><img aria-hidden="true" width="168" alt="" src="${image}" height="94"></span>
     </a>
     <span class="video-time">
       ${duration}
