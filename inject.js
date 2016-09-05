@@ -199,7 +199,7 @@ function replaceSidebar(data, query) {
 
 function playlistClick(e, elem) {
   e.preventDefault();
-  addToPlaylist(elem.parent().parent().parent());
+  addToPlaylist(elem.parent().parent().parent().parent());
   elem.find("button").text("Added!").unbind("click");
 }
 
@@ -208,9 +208,12 @@ jQuery.fn.outerHTML = function() {
 };
 
 function addToPlaylist($searchElem) {
+  console.log($searchElem.outerHTML);
+
   $searchElem.addClass('in-queue');
   // Remove the "new" button found in some suggestions, as it messes things up!
   $searchElem.find('.yt-badge-list').remove();
+  $searchElem.find('.yt-uix-menu-trigger').remove();
   chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
     var list;
     if (typeof response.storage === "undefined") {
