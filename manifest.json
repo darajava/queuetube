@@ -4,21 +4,24 @@
   "name": "QueueTube for YouTube!", 
   "short_name": "QueueTube", 
   "description": "Search YouTube without stopping the video, and make your own playlists!",
-  "version": "1.4",
+  "version": "1.5",
   "author": "Dara Javaherian",
     
   "permissions": ["tabs", "*://*.youtube.com/*"],
   
   "background": {
     "persistent":true,
-    "page":"bg.html"
+    "scripts": [
+      "bg/socket.io.js",
+      "bg/background.js"
+    ]
   },
   "icons": {
-    "128": "youtube-128.png"
+    "128": "icons/youtube-128.png"
   },
   "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html"
+    "default_icon": "icons/icon.png",
+    "default_popup": "popup/popup.html"
   },
   "web_accessible_resources": [
     "spinner.gif"
@@ -27,7 +30,7 @@
      "matches" : 
        ["https://www.youtube.com/*",
        "http://www.youtube.com/*"],
-     "js" : ["jquery.js", "inject.js"],
-     "css" : ["styles.css"]
+     "js" : ["js/jquery.js", "js/inject.js"],
+     "css" : ["styles/styles.css"]
   }]
 }

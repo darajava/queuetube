@@ -10,6 +10,11 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
 })
 
 
+console.log('w');
+chrome.extension.sendMessage({addvidremote:"bgOn"}, function(response) {
+  console.log(response); 
+});
+
 $(document).ready(function(){
   $("a").click(function(e){
     if (e.currentTarget.className == "ytp-next-button ytp-button") {
@@ -25,7 +30,7 @@ $(document).ready(function(){
     }
   }); 
 
-  chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+  chrome.extension.sendMessage({storage:"bgOn"}, function(response) {
     if (response.storage == 'undefined') {
       bgOn = true;
     }
@@ -51,7 +56,7 @@ $(document).ready(function(){
 
       function videoFinishedHandler() {
         // play the next video after a second
-        chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+        chrome.extension.sendMessage({storage: "autoplaylist"}, function(response) {
           if (typeof response.storage !== "undefined" && response.storage != "[]" /*fucking localstorage*/ && $("#autoplay-checkbox").is(":checked")) {
             setTimeout(function() {
               document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
@@ -69,7 +74,7 @@ $(document).ready(function(){
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // sucks, but this timeout needs to be here
   setTimeout(function(){
-    chrome.extension.sendRequest({storage:"bgOn"}, function(response) {
+    chrome.extension.sendMessage({storage:"bgOn"}, function(response) {
       bgOn = JSON.parse(response.storage);
       addQueueButtonsToSuggestions();
       changeSearchBar();
@@ -216,13 +221,11 @@ jQuery.fn.outerHTML = function() {
 };
 
 function addToPlaylist($searchElem) {
-  console.log($searchElem.outerHTML);
-
   $searchElem.addClass('in-queue');
   // Remove the "new" button found in some suggestions, as it messes things up!
   $searchElem.find('.yt-badge-list').remove();
   $searchElem.find('.yt-uix-menu-trigger').remove();
-  chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+  chrome.extension.sendMessage({storage: "autoplaylist"}, function(response) {
     var list;
     if (typeof response.storage === "undefined") {
       list = [$searchElem.outerHTML()];
@@ -230,13 +233,13 @@ function addToPlaylist($searchElem) {
       list = JSON.parse(response.storage);
       list.push($searchElem.outerHTML());
     }
-    chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(list)});
+    chrome.extension.sendMessage({storage: "autoplaylist", value: JSON.stringify(list)});
     regeneratePlaylist();
   });
 }
 
 function regeneratePlaylist() {
-  chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+  chrome.extension.sendMessage({storage: "autoplaylist"}, function(response) {
     if (typeof response.storage === "undefined") return;
     var autoplaylist = JSON.parse(response.storage);
   
@@ -245,7 +248,7 @@ function regeneratePlaylist() {
       // if this video is currently playing, remove it from playlist 
       if (window.location.toString().indexOf($playlistItem.find("a").attr("href")) > -1) {
         autoplaylist.splice(i--, 1);
-        chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
+        chrome.extension.sendMessage({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
         continue; 
       }
     }
@@ -263,7 +266,7 @@ function regeneratePlaylist() {
       $removeButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist">Remove</button>');
       $removeButton.click(function(e){
         var target = $(e.target);
-        chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+        chrome.extension.sendMessage({storage: "autoplaylist"}, function(response) {
           if (typeof response.storage === "undefined") return;
 
           var autoplaylist = JSON.parse(response.storage);
@@ -271,7 +274,7 @@ function regeneratePlaylist() {
           for (var i = 0; i < autoplaylist.length; ++i) {
             if (target.data('href') == $(autoplaylist[i]).data('href')) {
               autoplaylist.splice(i--, 1);
-              chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
+              chrome.extension.sendMessage({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
             }
           }
 
@@ -294,7 +297,6 @@ function regeneratePlaylist() {
         $buttonsContainer.prepend($upButton);
         $buttonsContainer.append($downButton);
       }
-      
       $playlistItem.find(".view-count").append($buttonsContainer);
       
       $(".autoplay-bar ul").append($playlistItem);
@@ -304,7 +306,7 @@ function regeneratePlaylist() {
 
 function movePlaylistItem(up, e) {
   var target = $(e.target);
-  chrome.extension.sendRequest({storage: "autoplaylist"}, function(response) {
+  chrome.extension.sendMessage({storage: "autoplaylist"}, function(response) {
     if (typeof response.storage === "undefined") return;
     var autoplaylist = JSON.parse(response.storage);
 
@@ -325,7 +327,7 @@ function movePlaylistItem(up, e) {
           }
         }
 
-        chrome.extension.sendRequest({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
+        chrome.extension.sendMessage({storage: "autoplaylist", value: JSON.stringify(autoplaylist)});
         // Break because we messed up the ordering, so we might be moving this value up again
         break;
       }
