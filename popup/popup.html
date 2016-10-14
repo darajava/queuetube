@@ -1,98 +1,14 @@
 <html>
 <head>
-<style>
-.onoffswitch {
-    position: relative; width: 116px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-}
-.onoffswitch-checkbox {
-    display: none;
-}
-.onoffswitch-label {
-    display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #FFFFFF; border-radius: 50px;
-}
-.onoffswitch-inner {
-    display: block; width: 200%; margin-left: -100%;
-    transition: margin 0.3s ease-in 0s;
-}
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 41px; padding: 0; line-height: 41px;
-    font-size: 25px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
-    box-sizing: border-box;
-}
-.onoffswitch-inner:before {
-    content: "ON";
-    padding-left: 14px;
-    background-color: #EEEEEE; color: #C23434;
-}
-.onoffswitch-inner:after {
-    content: "OFF";
-    padding-right: 14px;
-    background-color: #EEEEEE; color: #999999;
-    text-align: right;
-}
-.onoffswitch-switch {
-    display: block; width: 40px; margin: 0.5px;
-    background: #A1A1A1;
-    position: absolute; top: 0; bottom: 0;
-    right: 71px;
-    border: 2px solid #FFFFFF; border-radius: 50px;
-    transition: all 0.3s ease-in 0s; 
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-    margin-left: 0;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px; 
-    background-color: #F00000; 
-}
-#options {
-    border-top: 3px dotted #e5e5e5;
-    border-bottom: 3px dotted #e5e5e5;
-    box-shadow: inset 0 -1px 0 0 #e5e5e5, inset 0 1px 0 0 #e5e5e5, 0 1px 0 0 #e5e5e5, 0 -1px 0 0 #e5e5e5;
-    margin-bottom: 1px;
-    margin: 10px;
-    padding: 15px;
-    width: 290px;
-}
-#options .text {
-    float: left;
-    line-height: 44px;
-    font-family: arial;
-    margin-right: 10px;
-    font-size: 18px;
-    font-weight: bold;
-}
-#options .onoffswitch {
-  padding-left: 170px;
-}
-.smallright {
-  float: right;
-  padding-top: 10px;
-  font-size: 14px;
-  color: #999;
-}
-
-body {
-  height: 100px;
-}
-</style>
+  <script src="../bg/socket.io.js"></script>
+  <script src="../js/jquery.js"></script>
+  <script type='text/javascript' src='popup.js'></script>
+</head>
 <body>
-<div id="options">
-<div class="text">
-Background search:
-</div>
-<div class="onoffswitch">
-    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-    <label class="onoffswitch-label" for="myonoffswitch">
-        <span class="onoffswitch-inner"></span>
-        <span class="onoffswitch-switch"></span>
-    </label>
-</div>
-</div>
-<i class="smallright">(Ctrl + &#9166; to do a normal search)</i>
-<script type="text/javascript" src="popup.js"></script>
-
+mytoken:
+<input id="mytoken" />
+<br/>
+connectedtoken:
+<input id="connectedtoken" />
 </body>
 </html>

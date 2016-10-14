@@ -1,17 +1,23 @@
-window.addEventListener("load", function()
-{
+$(document).ready(function() {
+  var port = chrome.extension.connect({name: "qtoob"});
   var BGPage = chrome.extension.getBackgroundPage();
-  bg = BGPage.getBg();
 
-  document.getElementById("myonoffswitch").checked = bg === "true";
-  document.getElementById("myonoffswitch")
-          .addEventListener("click", setSearch, false);
-}, false);
+  $('#connectedtoken').change(function() {
+    var msg = {
+      room: $(this).val(),
+      message: $('#mytoken').val()
+    };
+    BGPage.setConnectedToken(msg.room);
+    port.postMessage(JSON.stringify(msg));
+  });
 
-function setSearch(){
-  var BGPage = chrome.extension.getBackgroundPage();
-  BGPage.setBg(this.checked);
+  $('#connectedtoken').val(BGPage.getConnectedToken());  
 
-  console.log();
-};
+  port.onMessage.addListener(function(msg) {});
 
+  if (BGPage.getMyToken() == "") {
+    $('#mytoken').val(BGPage.generateMyToken());
+  } else {
+    $('#mytoken').val(BGPage.getMyToken());
+  }
+});

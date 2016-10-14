@@ -1,15 +1,3 @@
-function getRandomToken() {
-    // E.g. 8 * 32 = 256 bits token
-    var randomPool = new Uint8Array(32);
-    crypto.getRandomValues(randomPool);
-    var hex = '';
-    for (var i = 0; i < randomPool.length; ++i) {
-        hex += randomPool[i].toString(16);
-    }
-    // E.g. db18458e2782b2b77e36769c569e263a53885a9944dd0a861e5064eac16f1a
-    return hex;
-}
-
 chrome.runtime.onInstalled.addListener(function(details){
   if (details.reason == "install") {
     localStorage['bgOn'] = 'true';
@@ -17,6 +5,22 @@ chrome.runtime.onInstalled.addListener(function(details){
   }
 });
 
+var socket = io.connect("http://darajava.ie:3000");
+
+// RECIEVE VIDEOS VIA SOCKET
+chrome.extension.onConnect.addListener(function(port) {
+  port.onMessage.addListener(function(msg) {
+    msg = JSON.parse(msg);
+    socket.emit('subscribe', msg.room);
+    socket.emit('send', { room: msg.room, message: msg.message });
+console.log('d');
+    socket.on('message', function (data) {
+      console.log(data);
+    });
+
+    port.postMessage("connection established");
+  });
+});
 
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.storage) {
@@ -25,6 +29,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     }
     sendResponse({storage: localStorage[request.storage]});
   } else if (request.addvidremote) {
+    // ADDING A VIDEO VIA SOCKET
     var socket = io.connect("http://darajava.ie:3000");
     socket.emit('chat message', 'lolol');
     sendResponse({farewell: socket.toString()});
@@ -62,3 +67,20 @@ setBg = function(bgOn) {
   setText();
 };
 
+generateMyToken = function() {
+  localStorage['mytoken'] = 'blah';
+  return localStorage['mytoken'];
+}
+
+getMyToken = function() {
+  return localStorage['mytoken'];
+}
+
+setConnectedToken = function(token) {
+  localStorage['connectedtoken'] = token;
+  return localStorage['connectedtoken'];
+}
+
+getConnectedToken = function() {
+  return localStorage['connectedtoken'];
+}
