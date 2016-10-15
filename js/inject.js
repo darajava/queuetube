@@ -9,12 +9,6 @@ Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
     }
 })
 
-
-console.log('w');
-chrome.extension.sendMessage({addvidremote:"bgOn"}, function(response) {
-  console.log(response); 
-});
-
 $(document).ready(function(){
   $("a").click(function(e){
     if (e.currentTarget.className == "ytp-next-button ytp-button") {
@@ -214,6 +208,10 @@ function playlistClick(e, elem) {
   e.preventDefault();
   addToPlaylist(elem.parents('li:first'));
   elem.find("button").text("Added!").unbind("click");
+  alert();
+  chrome.extension.sendMessage({addvidremote: true, video: elem}, function(response) {
+    console.log(response); 
+  });
 }
 
 jQuery.fn.outerHTML = function() {

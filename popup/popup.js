@@ -5,9 +5,8 @@ $(document).ready(function() {
   $('#connectedtoken').change(function() {
     var msg = {
       room: $(this).val(),
-      message: $('#mytoken').val()
+      action: 'setConnectedToken'
     };
-    BGPage.setConnectedToken(msg.room);
     port.postMessage(JSON.stringify(msg));
   });
 
@@ -15,9 +14,5 @@ $(document).ready(function() {
 
   port.onMessage.addListener(function(msg) {});
 
-  if (BGPage.getMyToken() == "") {
-    $('#mytoken').val(BGPage.generateMyToken());
-  } else {
-    $('#mytoken').val(BGPage.getMyToken());
-  }
+  $('#mytoken').val(BGPage.getMyToken());
 });
