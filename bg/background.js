@@ -46,7 +46,13 @@ var socket = io.connect("http://darajava.ie:3000");
 socket.emit('subscribe', getMyToken());
 
 socket.on('message', function(msg) {
-  console.log(msg);
+  chrome.tabs.query({}, function(tabs) {
+    console.log(tabs);
+    for (var i=0; i<tabs.length; ++i) {
+      if (tabs[i].url.indexOf('youtube.com') !== -1)  
+        chrome.tabs.sendMessage(tabs[i].id, {action: 'addRemote', video: msg.video});
+    }
+  });
 })
 
 if (typeof getConnectedToken() !== 'undefined') {

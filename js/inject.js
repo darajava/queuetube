@@ -66,16 +66,21 @@ $(document).ready(function(){
 // listen in bg.js for page reloads
 // TODO: don't have this run on first page reload and share code 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  // sucks, but this timeout needs to be here
-  setTimeout(function(){
-    chrome.extension.sendMessage({storage:"bgOn"}, function(response) {
-      bgOn = JSON.parse(response.storage);
-      addQueueButtonsToSuggestions();
-      changeSearchBar();
-      regeneratePlaylist();
-    });
-    $savedSuggestions = $("#watch-related").clone();
-  }, 500);
+  console.log(request);
+  if (request.action == 'addRemote') {
+    addToPlaylist($(request.video));
+  } else {
+    // sucks, but this timeout needs to be here
+    setTimeout(function(){
+      chrome.extension.sendMessage({storage:"bgOn"}, function(response) {
+        bgOn = JSON.parse(response.storage);
+        addQueueButtonsToSuggestions();
+        changeSearchBar();
+        regeneratePlaylist();
+      });
+      $savedSuggestions = $("#watch-related").clone();
+    }, 500);
+  }
 });
 
 function addQueueButtonsToSuggestions() {
@@ -208,10 +213,15 @@ function playlistClick(e, elem) {
   e.preventDefault();
   addToPlaylist(elem.parents('li:first'));
   elem.find("button").text("Added!").unbind("click");
-  alert();
-  chrome.extension.sendMessage({addvidremote: true, video: elem}, function(response) {
-    console.log(response); 
-  });
+  chrome.extension.sendMessage(
+    {
+      addvidremote: true, 
+      video: elem.parents('li:first')[0].outerHTML
+    },
+    function(response) {
+      console.log(response); 
+    }
+  );
 }
 
 jQuery.fn.outerHTML = function() {
