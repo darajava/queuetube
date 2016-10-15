@@ -20,8 +20,8 @@ function randomInt(min, max) {
 }
 
 regenerateMyToken = function() {
-  var consonants = 'qwrtypsdfghjklzxcvbnm';
-  var vowels = 'aeiou';
+  var consonants = 'weruoaszxcvnm';
+  var vowels = 'aeou';
   
   var blocks = randomInt(3, 4);
 
@@ -61,6 +61,14 @@ setConnectedToken = function(token) {
   return localStorage['connectedtoken'];
 }
 
+getNickname = function() {
+  return localStorage['nickname'];
+}
+
+setNickname = function(nick) {
+  localStorage['nickname'] = nick;
+}
+
 getConnectedToken = function() {
   return localStorage['connectedtoken'];
 }
@@ -77,10 +85,11 @@ socket.emit('subscribe', getMyToken());
 
 socket.on('message', function(msg) {
   chrome.tabs.query({}, function(tabs) {
-    console.log(tabs);
     for (var i=0; i<tabs.length; ++i) {
-      if (tabs[i].url.indexOf('youtube.com') !== -1)  
-        chrome.tabs.sendMessage(tabs[i].id, {action: 'addRemote', video: msg.video});
+      if (tabs[i].url.indexOf('youtube.com') !== -1)
+        if (msg.room == getMyToken()) { 
+          chrome.tabs.sendMessage(tabs[i].id, {action: 'addRemote', video: msg.video, nickname: msg.nickname});
+      }
     }
   });
 })
@@ -98,6 +107,8 @@ chrome.extension.onConnect.addListener(function(port) {
         // unsubscribe from old room
         socket.emit('unsubscribe', getConnectedToken());
         socket.emit('subscribe', setConnectedToken(msg.room));
+      case 'setNickname':
+        setNickname(msg.nickname);
       break;
     }
     port.postMessage("connection established");
@@ -113,7 +124,8 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
   } else if (request.addvidremote) {
     socket.emit('send', {
       room: getConnectedToken(),
-      video: request.video 
+      video: request.video,
+      nickname: getNickname() 
     });
     sendResponse({});
   }

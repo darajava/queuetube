@@ -3,6 +3,11 @@
   margin-left: 10px;
 }
 
+.added-by {
+  position: relative;
+  top: 20px;
+}
+
 .add-playlist {
     border-color: #d3d3d3;
     box-sizing: border-box;

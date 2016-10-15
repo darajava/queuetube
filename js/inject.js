@@ -66,9 +66,13 @@ $(document).ready(function(){
 // listen in bg.js for page reloads
 // TODO: don't have this run on first page reload and share code 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log(request);
   if (request.action == 'addRemote') {
-    addToPlaylist($(request.video));
+    elem = $(request.video);
+    console.log(request);
+    elem.find('.view-count').after($('<span class="added-by">Added by <i>' + request.nickname + '</i></span>'));   
+    elem.find('.add-playlist').remove();
+    elem.find('.add-playlist-remote').remove();
+    addToPlaylist(elem);
   } else {
     // sucks, but this timeout needs to be here
     setTimeout(function(){
@@ -89,10 +93,17 @@ function addQueueButtonsToSuggestions() {
       url = $(this).find('a.yt-uix-sessionlink.content-link').attr('href');
       $(this).addClass('in-queue');
       $(this).attr('data-href', url);
-      $(this).find('.view-count').after($(`<span class="stat add-to-playlist suggestion" data-video-id="${url}"><button class="add-playlist">Add to queue</button></span>`));
+      $(this).find('.view-count').after($(`<span class="stat add-to-playlist suggestion" data-video-id="${url}"><button class="add-playlist">Add to queue</button></span>`))
+      .after($(`<span class="stat add-to-playlist-remote suggestion" data-video-id="${url}"><button class="add-playlist">Add to nickname's queue</button></span>`));
     }
   });
-  $(".suggestion.add-to-playlist").click(function(e){playlistClick(e, $(this));});
+  $(".suggestion.add-to-playlist").click(function(e){
+    playlistClick(e, $(this));
+  });
+  $(".suggestion.add-to-playlist-remote").click(function(e){
+    playlistClick(e, $(this));
+    playlistClickRemote(e, $(this));
+  });
 }
 
 function saveSearchBars() {
@@ -205,6 +216,10 @@ function replaceSidebar(data, query) {
   })
 
   $(".add-to-playlist").click(function(e){playlistClick(e, $(this))});
+  $(".add-to-playlist-remote").click(function(e){
+    playlistClick(e, $(this));
+    playlistClickRemote(e, $(this));
+  });
  
   removeOverlay();
 }
@@ -213,6 +228,10 @@ function playlistClick(e, elem) {
   e.preventDefault();
   addToPlaylist(elem.parents('li:first'));
   elem.find("button").text("Added!").unbind("click");
+}
+
+function playlistClickRemote(e, elem) {
+  e.preventDefault();
   chrome.extension.sendMessage(
     {
       addvidremote: true, 
@@ -233,6 +252,7 @@ function addToPlaylist($searchElem) {
   // Remove the "new" button found in some suggestions, as it messes things up!
   $searchElem.find('.yt-badge-list').remove();
   $searchElem.find('.yt-uix-menu-trigger').remove();
+  $searchElem.find('.add-playlist').remove();
   chrome.extension.sendMessage({storage: "autoplaylist"}, function(response) {
     var list;
     if (typeof response.storage === "undefined") {
@@ -295,16 +315,14 @@ function regeneratePlaylist() {
       });
       $buttonsContainer.append($removeButton);
 
-      if (autoplaylist.length > 1) {
-        $upButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist" alt="Move up">&#x25B2;</button>');
-        $downButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist" alt="Move down">&#x25BC;</button>');
+      $upButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist" alt="Move up">&#x25B2;</button>');
+      $downButton = $('<button data-href="' + $playlistItem.data('href') + '" class="add-playlist" alt="Move down">&#x25BC;</button>');
 
-        $upButton.click(function(e) { movePlaylistItem(true, e)});
-        $downButton.click(function(e) { movePlaylistItem(false, e)});
+      $upButton.click(function(e) { movePlaylistItem(true, e)});
+      $downButton.click(function(e) { movePlaylistItem(false, e)});
 
-        $buttonsContainer.prepend($upButton);
-        $buttonsContainer.append($downButton);
-      }
+      $buttonsContainer.prepend($upButton);
+      $buttonsContainer.append($downButton);
       $playlistItem.find(".view-count").append($buttonsContainer);
       
       $(".autoplay-bar ul").append($playlistItem);

@@ -10,9 +10,18 @@ $(document).ready(function() {
     port.postMessage(JSON.stringify(msg));
   });
 
+  $('#nickname').change(function() {
+    var msg = {
+      nickname: $(this).val(),
+      action: 'setNickname'
+    };
+    port.postMessage(JSON.stringify(msg));
+  });
+
   $('#connectedtoken').val(BGPage.getConnectedToken());  
 
   port.onMessage.addListener(function(msg) {});
 
   $('#mytoken').val(BGPage.getMyToken());
+  $('#nickname').val(BGPage.getNickname());
 });
