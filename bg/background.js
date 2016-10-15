@@ -15,8 +15,38 @@ setBg = function(bgOn) {
   setText();
 };
 
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 regenerateMyToken = function() {
-  localStorage['mytoken'] = 'blah';
+  var consonants = 'qwrtypsdfghjklzxcvbnm';
+  var vowels = 'aeiou';
+  
+  var blocks = randomInt(3, 4);
+
+  var token = '';  
+
+  var pickConsonant = true;
+
+  do {
+    var blockLength = randomInt(3, 6);
+    do {
+      if (pickConsonant) {
+        token += consonants.charAt(randomInt(0, consonants.length - 1));
+        pickConsonant = false;
+      } else {
+        token += vowels.charAt(randomInt(0, vowels.length - 1));
+        if (randomInt(0, 3) == 0) {
+          pickConsonant = true;
+        }
+      }
+    } while(--blockLength > 0);
+    pickConsonant = true;
+    token += '-'
+  } while(--blocks > 0);
+  
+  localStorage['mytoken'] = token.slice(0, -1);
 };
 
 getMyToken = function() {
