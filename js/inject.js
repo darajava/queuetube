@@ -91,7 +91,6 @@ function addQueueButtonsToSuggestions() {
       
       elem = $(this); 
       chrome.extension.sendMessage({storage: "connectedNick"}, function(response) {
-        console.log('ss');
         elem.find('.view-count').after($(`<span class="stat add-to-playlist suggestion" data-video-id="${url}"><button class="add-playlist">Add to queue</button></span>`));
         if (typeof response.storage != 'undefined' && response.storage != '') {
           elem.find('.view-count').after($('<span class="stat add-to-playlist-remote suggestion" data-video-id="${url}"><button class="add-playlist">Add to ' + response.storage + '\'s queue</button></span>'));
@@ -213,17 +212,30 @@ function replaceSidebar(data, query) {
   $("#restore-original").click(function() {
     restoreOriginal();
   });
-  newNodes.forEach(function(node) {
-    $("#watch7-sidebar-contents #watch-related.video-list").append(node);
-  })
-
-  $(".add-to-playlist").click(function(e){playlistClick(e, $(this))});
-  $(".add-to-playlist-remote").click(function(e){
-    playlistClick(e, $(this));
-    playlistClickRemote(e, $(this));
-  });
  
-  removeOverlay();
+  chrome.extension.sendMessage({storage: "connectedNick"}, function(response) {
+    newNodes.forEach(function(node) {
+      var addToPlaylist = "";
+      var duration = node.find(".accessible-description").text().replace(" - Duration: ", "").replace("Already watched.", "").replace(".", "");
+      // if we don't have a video (i.e. playlist or channel), disallow adding to playlist
+      if (!duration.match(/[0-9]+:[0-9]/)) {
+        addToPlaylist = "hidden";
+      }
+      if (typeof response.storage != 'undefined' && response.storage != '') {
+        node.find('.view-count').after($('<span class="stat add-to-playlist-remote suggestion" ><button class="' + addToPlaylist + ' add-playlist">Add to ' + response.storage + '\'s queue</button></span>'));
+      }
+      node.find(".suggestion.add-to-playlist-remote").click(function(e){
+        e.preventDefault();
+        playlistClick(e, $(this));
+        playlistClickRemote(e, $(this));
+      });
+      $("#watch7-sidebar-contents #watch-related.video-list").append(node);
+    });
+
+    $(".add-to-playlist").click(function(e){playlistClick(e, $(this))});
+    removeOverlay();
+  });
+
 }
 
 function playlistClick(e, elem) {
@@ -429,5 +441,6 @@ $newRes = $(`
 
 </li>
 `);
+
   return $newRes;
 }
