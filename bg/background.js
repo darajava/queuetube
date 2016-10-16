@@ -134,7 +134,9 @@ chrome.extension.onConnect.addListener(function(port) {
       case 'setConnectedToken':
         // unsubscribe from old room
         socket.emit('unsubscribe', getConnectedToken());
-        socket.emit('subscribe', {room: setConnectedToken(msg.room), mytoken: getMyToken()});
+        delete localStorage['connectedNick'];
+        if (typeof msg.room !== 'undefined' && msg.room.length > 1)
+          socket.emit('subscribe', {room: setConnectedToken(msg.room), mytoken: getMyToken()});
         break;
       case 'setNickname':
         socket.emit('sendnick', {nickname: msg.nickname, room: msg.room, mytoken: "*"});
