@@ -4,7 +4,7 @@ Allows searching YouTube without interrupting the video, by loading the search r
 
 Chrome Web Store: https://chrome.google.com/webstore/detail/queuetube-for-youtube/cmgmibjndnhopdjednaoapagmpchagmg
 
-Beta version (Please report any bugs): https://chrome.google.com/webstore/detail/queuetube-beta/cnhdddmdljpdcoopdniglhgliliphakf
+Alpha version with support for adding vids remotely (Please report any bugs): https://chrome.google.com/webstore/detail/queuetube-beta/cnhdddmdljpdcoopdniglhgliliphakf
 
 ##### Features
 Background searching of videos
