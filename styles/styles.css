@@ -4,8 +4,13 @@
 }
 
 .added-by {
-  position: relative;
-  top: 20px;
+  position: absolute;
+  top: 73px;
+  font-size: 11px;
+}
+
+.added-by i {
+  color: #63b50f;
 }
 
 .add-playlist {

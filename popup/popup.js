@@ -2,6 +2,12 @@ $(document).ready(function() {
   var port = chrome.extension.connect({name: "qtoob"});
   var BGPage = chrome.extension.getBackgroundPage();
 
+  $('#regenerate').click(function() {
+    var msg = {
+      action: 'regenerateToken'
+    };
+    port.postMessage(JSON.stringify(msg));
+  });
   $('#connectedtoken').change(function() {
     var msg = {
       room: $(this).val(),

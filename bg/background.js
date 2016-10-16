@@ -20,7 +20,7 @@ function randomInt(min, max) {
 }
 
 regenerateMyToken = function() {
-  var consonants = 'weruoaszxcvnm';
+  var consonants = 'wrszxcvnm';
   var vowels = 'aeou';
   
   var blocks = randomInt(3, 4);
@@ -84,14 +84,23 @@ var socket = io.connect("http://darajava.ie:3000");
 socket.emit('subscribe', getMyToken());
 
 socket.on('message', function(msg) {
-  chrome.tabs.query({}, function(tabs) {
-    for (var i=0; i<tabs.length; ++i) {
-      if (tabs[i].url.indexOf('youtube.com') !== -1)
-        if (msg.room == getMyToken()) { 
-          chrome.tabs.sendMessage(tabs[i].id, {action: 'addRemote', video: msg.video, nickname: msg.nickname});
-      }
+  if (msg.room == getMyToken()) { 
+    if (typeof localStorage['autoplaylist'] === 'undefinied') {
+      list = [msg.video];
+    } else {
+      var list = JSON.parse(localStorage['autoplaylist']);
+      list.push(msg.video);
     }
-  });
+  
+    localStorage['autoplaylist'] = JSON.stringify(list);
+
+    chrome.tabs.query({}, function(tabs) {
+      for (var i=0; i<tabs.length; ++i) {
+        if (tabs[i].url.indexOf('youtube.com') !== -1)
+          chrome.tabs.sendMessage(tabs[i].id, {action: 'addRemote'});
+      }
+    });
+  }
 })
 
 if (typeof getConnectedToken() !== 'undefined') {
@@ -109,6 +118,8 @@ chrome.extension.onConnect.addListener(function(port) {
         socket.emit('subscribe', setConnectedToken(msg.room));
       case 'setNickname':
         setNickname(msg.nickname);
+      case 'regenerateToken':
+        regenerateMyToken();
       break;
     }
     port.postMessage("connection established");
@@ -124,8 +135,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
   } else if (request.addvidremote) {
     socket.emit('send', {
       room: getConnectedToken(),
-      video: request.video,
-      nickname: getNickname() 
+      video: request.video
     });
     sendResponse({});
   }

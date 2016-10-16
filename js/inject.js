@@ -67,12 +67,7 @@ $(document).ready(function(){
 // TODO: don't have this run on first page reload and share code 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action == 'addRemote') {
-    elem = $(request.video);
-    console.log(request);
-    elem.find('.view-count').after($('<span class="added-by">Added by <i>' + request.nickname + '</i></span>'));   
-    elem.find('.add-playlist').remove();
-    elem.find('.add-playlist-remote').remove();
-    addToPlaylist(elem);
+    regeneratePlaylist();
   } else {
     // sucks, but this timeout needs to be here
     setTimeout(function(){
@@ -232,15 +227,23 @@ function playlistClick(e, elem) {
 
 function playlistClickRemote(e, elem) {
   e.preventDefault();
-  chrome.extension.sendMessage(
+  elem = elem.parents('li:first').clone();
+
+  chrome.extension.sendMessage({storage: "nickname"}, function(response) {
+    console.log(response);
+    elem.find('.view-count').after($('<span class="added-by">Added by <i>' + response.storage + '</i></span>'));  
+    elem.find('.add-playlist').remove();
+    elem.find('.add-playlist-remote').remove();
+
+    chrome.extension.sendMessage(
     {
       addvidremote: true, 
-      video: elem.parents('li:first')[0].outerHTML
+      video: elem[0].outerHTML
     },
     function(response) {
       console.log(response); 
-    }
-  );
+    });
+  });
 }
 
 jQuery.fn.outerHTML = function() {
