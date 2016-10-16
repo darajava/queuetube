@@ -88,16 +88,23 @@ function addQueueButtonsToSuggestions() {
       url = $(this).find('a.yt-uix-sessionlink.content-link').attr('href');
       $(this).addClass('in-queue');
       $(this).attr('data-href', url);
-      $(this).find('.view-count').after($(`<span class="stat add-to-playlist suggestion" data-video-id="${url}"><button class="add-playlist">Add to queue</button></span>`))
-      .after($(`<span class="stat add-to-playlist-remote suggestion" data-video-id="${url}"><button class="add-playlist">Add to nickname's queue</button></span>`));
+      
+      elem = $(this); 
+      chrome.extension.sendMessage({storage: "connectedNick"}, function(response) {
+        console.log('ss');
+        elem.find('.view-count').after($(`<span class="stat add-to-playlist suggestion" data-video-id="${url}"><button class="add-playlist">Add to queue</button></span>`));
+        if (typeof response.storage != 'undefined' && response.storage != '') {
+          elem.find('.view-count').after($('<span class="stat add-to-playlist-remote suggestion" data-video-id="${url}"><button class="add-playlist">Add to ' + response.storage + '\'s queue</button></span>'));
+        }
+        elem.find(".suggestion.add-to-playlist").click(function(e){
+          playlistClick(e, $(this));
+        });
+        elem.find(".suggestion.add-to-playlist-remote").click(function(e){
+          playlistClick(e, $(this));
+          playlistClickRemote(e, $(this));
+        });
+      });
     }
-  });
-  $(".suggestion.add-to-playlist").click(function(e){
-    playlistClick(e, $(this));
-  });
-  $(".suggestion.add-to-playlist-remote").click(function(e){
-    playlistClick(e, $(this));
-    playlistClickRemote(e, $(this));
   });
 }
 

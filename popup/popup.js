@@ -25,9 +25,6 @@ $(document).ready(function() {
   });
 
   $('#connectedtoken').val(BGPage.getConnectedToken());  
-
-  port.onMessage.addListener(function(msg) {});
-
   $('#mytoken').val(BGPage.getMyToken());
   $('#nickname').val(BGPage.getNickname());
 });

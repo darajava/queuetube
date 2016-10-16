@@ -80,12 +80,32 @@ chrome.runtime.onInstalled.addListener(function(details){
 });
 
 var socket = io.connect("http://darajava.ie:3000");
+socket.emit('subscribe', {room: getMyToken(), mytoken: getMyToken()});
 
-socket.emit('subscribe', getMyToken());
+// give room's nick to mytoken
+socket.on('receivenick', function(msg) {
+  //localStorage['connectedNick'] = '';
+  console.log(msg.room);
+  console.log(getMyToken());
+  if (msg.room == getConnectedToken() && msg.mytoken == getMyToken()) {
+    localStorage['connectedNick'] = msg.nickname;
+    console.log('connectedNick: ' + localStorage['connectedNick']);
+  }
+});
+
+// ask for room's nick from mytoken
+socket.on('askfornick', function(msg) {
+  console.log(msg);
+  if (msg.room == getMyToken()) {
+    console.log(msg);
+    socket.emit('sendnick', {nickname: getNickname(), room: msg.room, mytoken: msg.mytoken});
+  }
+});
 
 socket.on('message', function(msg) {
+  console.log(msg);
   if (msg.room == getMyToken()) { 
-    if (typeof localStorage['autoplaylist'] === 'undefinied') {
+    if (typeof localStorage['autoplaylist'] === 'undefined') {
       list = [msg.video];
     } else {
       var list = JSON.parse(localStorage['autoplaylist']);
@@ -104,7 +124,7 @@ socket.on('message', function(msg) {
 })
 
 if (typeof getConnectedToken() !== 'undefined') {
-  socket.emit('subscribe', getConnectedToken());
+  socket.emit('subscribe', {room: getConnectedToken(), mytoken: getMyToken()});
 } 
 
 // RECIEVE VIDEOS VIA SOCKET
@@ -115,7 +135,8 @@ chrome.extension.onConnect.addListener(function(port) {
       case 'setConnectedToken':
         // unsubscribe from old room
         socket.emit('unsubscribe', getConnectedToken());
-        socket.emit('subscribe', setConnectedToken(msg.room));
+        socket.emit('subscribe', {room: setConnectedToken(msg.room), mytoken: getMyToken()});
+
       case 'setNickname':
         setNickname(msg.nickname);
       case 'regenerateToken':

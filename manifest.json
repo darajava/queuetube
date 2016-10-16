@@ -27,10 +27,12 @@
     "spinner.gif"
   ],
   "content_scripts" : [{
-     "matches" : 
-       ["https://www.youtube.com/*",
-       "http://www.youtube.com/*"],
-     "js" : ["js/jquery.js", "js/inject.js"],
-     "css" : ["styles/styles.css"]
+    "matches" : 
+      ["https://www.youtube.com/*",
+      "http://www.youtube.com/*"],
+    "js" : [
+      "js/jquery.js",
+      "js/inject.js"],
+    "css" : ["styles/styles.css"]
   }]
 }
