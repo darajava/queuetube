@@ -18,6 +18,7 @@ $(document).ready(function() {
 
   $('#nickname').change(function() {
     var msg = {
+      room: $('#mytoken').val(),
       nickname: $(this).val(),
       action: 'setNickname'
     };

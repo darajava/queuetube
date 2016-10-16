@@ -85,9 +85,8 @@ socket.emit('subscribe', {room: getMyToken(), mytoken: getMyToken()});
 // give room's nick to mytoken
 socket.on('receivenick', function(msg) {
   //localStorage['connectedNick'] = '';
-  console.log(msg.room);
-  console.log(getMyToken());
-  if (msg.room == getConnectedToken() && msg.mytoken == getMyToken()) {
+  console.log(msg);
+  if (msg.room == getConnectedToken() && (msg.mytoken == '*' || msg.mytoken == getMyToken())) {
     localStorage['connectedNick'] = msg.nickname;
     console.log('connectedNick: ' + localStorage['connectedNick']);
   }
@@ -136,9 +135,11 @@ chrome.extension.onConnect.addListener(function(port) {
         // unsubscribe from old room
         socket.emit('unsubscribe', getConnectedToken());
         socket.emit('subscribe', {room: setConnectedToken(msg.room), mytoken: getMyToken()});
-
+        break;
       case 'setNickname':
+        socket.emit('sendnick', {nickname: msg.nickname, room: msg.room, mytoken: "*"});
         setNickname(msg.nickname);
+        break;
       case 'regenerateToken':
         regenerateMyToken();
       break;
