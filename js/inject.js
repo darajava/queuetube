@@ -54,11 +54,11 @@ $(document).ready(function(){
           if (typeof response.storage !== "undefined" && response.storage != "[]" /*fucking localstorage*/ && $("#autoplay-checkbox").is(":checked")) {
             setTimeout(function() {
               document.location = $(".autoplay-bar ul li:first-child a:first-child").attr("href");
-            }, 3000);
+            }, 30);
           }
         });
       }
-    }, 3000);
+    }, 30);
   }
 });
 
@@ -99,7 +99,6 @@ function addQueueButtonsToSuggestions() {
           playlistClick(e, $(this));
         });
         elem.find(".suggestion.add-to-playlist-remote").click(function(e){
-          playlistClick(e, $(this));
           playlistClickRemote(e, $(this));
         });
       });
@@ -202,7 +201,7 @@ function replaceSidebar(data, query) {
   $nodes.each(function() {
     node = createNewSideRes($(this));
     if (node != null)
-      newNodes.push(createNewSideRes($(this)));
+      newNodes.push(node);
   });
 
   $("#generated-res").remove();
@@ -226,7 +225,6 @@ function replaceSidebar(data, query) {
       }
       node.find(".suggestion.add-to-playlist-remote").click(function(e){
         e.preventDefault();
-        playlistClick(e, $(this));
         playlistClickRemote(e, $(this));
       });
       $("#watch7-sidebar-contents #watch-related.video-list").append(node);
